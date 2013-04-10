@@ -12,7 +12,7 @@ use Regexp::Common510;
 use warnings::register;
 
 my %IP4map  = (
-    16      => 'hex',
+    16      => 'HeX',
     10      => 'dec',
      8      => 'oct',
      2      => 'bin',
