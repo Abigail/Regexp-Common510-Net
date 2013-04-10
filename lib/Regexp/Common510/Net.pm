@@ -1,11 +1,67 @@
 package Regexp::Common510::Net;
 
-use 5.006;
+use 5.010;
 use strict;
 use warnings;
 no  warnings 'syntax';
 
 our $VERSION = '2013041001';
+
+use Regexp::Common510;
+
+use warnings::register;
+
+my %IP4map  = (
+    16      => 'hex',
+    10      => 'dec',
+     8      => 'oct',
+     2      => 'bin',
+);
+
+my %IP4unit = (
+    dec => q {25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2}},
+    oct => q {[0-3]?[0-7]{1,2}},
+    hex => q {[0-9a-f]{1,2}},
+    HeX => q {[0-9a-fA-F]{1,2}},
+    HEX => q {[0-9A-F]{1,2}},
+    bin => q {[0-1]{1,8}},
+);
+
+
+pattern  Net           => 'IPv4',
+         -config       => {
+            -sep       =>  '\.',
+            -base      =>   10,
+         },
+         -pattern      => \&IPv4,
+;
+
+
+sub IPv4 {
+    my %args = @_;
+
+    my $base = $args {-base};
+       $base = $IP4map {$base} if $IP4map {$base};
+
+    warnings::warn ("Unknown -base '$base', falling back to default 'dec'\n")
+       if (!$base || !$IP4unit {$base}) && warnings::enabled;
+
+    my $byte = $IP4unit {$base};
+
+    my $sep = $args {-sep};
+    eval {qr /$sep/} or do {
+        $sep = '\.';
+        warnings::warn ("Cannot compile pattern '$sep' for the separator -- " .
+                        "failling back to default /\\./\n")
+               if warnings::enabled;
+    };
+
+    return '(?k<IPv4>:'                .
+           "(?k<byte1>:$byte)(?:$sep)" .
+           "(?k<byte2>:$byte)(?:$sep)" .
+           "(?k<byte3>:$byte)(?:$sep)" .
+           "(?k<byte4>:$byte))";
+}
 
 
 1;
