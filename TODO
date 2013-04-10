@@ -4,7 +4,6 @@
          - Match:
              - Different combinations of numbers
              - Different separator
-             - Numeric bases
          - No match:
              - Missing octets
              - Extra octest

@@ -17,7 +17,7 @@ our $r = eval "require Test::NoWarnings; 1";
 #
 
 my %tester;
-foreach my $base (qw [bin oct dec hex HeX HEX]) {
+foreach my $base (qw [bin 2 oct 8 dec 10 hex HeX HEX 16]) {
     $tester {$base} = Test::Regexp:: -> new -> init (
               pattern      => RE (Net => 'IPv4', -base => $base, -Keep => 0),
               keep_pattern => RE (Net => 'IPv4', -base => $base, -Keep => 1),
@@ -29,34 +29,41 @@ $tester {default} = Test::Regexp:: -> new -> init (
           keep_pattern => RE (Net => 'IPv4', -Keep => 1),
           name         => "Net IPv4",
 );
-$tester {hEx} = $tester {HeX};
 
 my %format =  (
-    default  => '%d',
     bin      => '%b',
     oct      => '%o',
     dec      => '%d',
     hex      => '%x',
-    HeX      => '%x',
-    hEx      => '%X',
     HEX      => '%X',
 );
 
+my %test = (
+    bin      => [qw [2 bin]],
+    oct      => [qw [8 oct]],
+    dec      => [qw [default 10 dec]],
+    hex      => [qw [16 hex HeX]],
+    HEX      => [qw [16 HEX HeX]],
+);
+
 foreach my $Number (0 .. 300) {
-    foreach my $base (qw [default bin oct dec hex HeX hEx HEX]) {
+    foreach my $base (qw [bin oct dec hex HEX]) {
         my $number  = sprintf $format {$base} => $Number;
-        next if $base eq 'hEX' && $number =~ /^[0-9]+$/; # Done already
         my $address = "$number.$number.$number.$number";
-        if ($Number <= 255) {
-            $tester {$base} -> match ($address,
-                                      captures => [[IPv4  => $address],
-                                                   [byte1 => $number],
-                                                   [byte2 => $number],
-                                                   [byte3 => $number],
-                                                   [byte4 => $number]]);
-        }
-        else {
-            $tester {$base} -> no_match ($address);
+
+        foreach my $test (@{$test {$base}}) {
+            next if $base eq 'HEX' && $test ne 'HEX' && $number =~ /^[0-9]+$/;
+            if ($Number <= 255) {
+                $tester {$test} -> match ($address,
+                                          captures => [[IPv4  => $address],
+                                                       [byte1 => $number],
+                                                       [byte2 => $number],
+                                                       [byte3 => $number],
+                                                       [byte4 => $number]]);
+            }
+            else {
+                $tester {$test} -> no_match ($address);
+            }
         }
     }
 }
