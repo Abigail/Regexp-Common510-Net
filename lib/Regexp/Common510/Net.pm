@@ -56,7 +56,7 @@ sub IPv4 {
                if warnings::enabled;
     };
 
-    return '(?k<IPv4>:'                .
+    return '(?k<IPv4>:'                  .
            "(?k<octet1>:$octet)(?:$sep)" .
            "(?k<octet2>:$octet)(?:$sep)" .
            "(?k<octet3>:$octet)(?:$sep)" .
