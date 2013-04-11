@@ -62,7 +62,8 @@ foreach my $Number (0 .. 300) {
                                                        [octet => $number]]);
             }
             else {
-                $tester {$test} -> no_match ($address);
+                $tester {$test} -> no_match ($address,
+                                             reason => "Octets too large");
             }
         }
     }
