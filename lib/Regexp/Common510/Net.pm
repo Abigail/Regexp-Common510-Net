@@ -57,11 +57,11 @@ sub IPv4 {
                if warnings::enabled;
     };
 
-    return '(?k<IPv4>:'                  .
-           "(?k<octet1>:$octet)(?:$sep)" .
-           "(?k<octet2>:$octet)(?:$sep)" .
-           "(?k<octet3>:$octet)(?:$sep)" .
-           "(?k<octet4>:$octet))";
+    return '(?k<IPv4>:'                 .
+           "(?k<octet>:$octet)(?:$sep)" .
+           "(?k<octet>:$octet)(?:$sep)" .
+           "(?k<octet>:$octet)(?:$sep)" .
+           "(?k<octet>:$octet))";
 }
 
 
@@ -135,9 +135,11 @@ following named captures are done:
 
 The entire address.
 
-=item C<< octet1 >> .. C<< octet4 >>
+=item C<< octet >>
 
-The four octets.
+The four octets. Note that there are four capture groups with the name
+C<< octet >>, so one has to look at C<< $- {octet} >> to inspect all
+of them.
 
 =back 
 

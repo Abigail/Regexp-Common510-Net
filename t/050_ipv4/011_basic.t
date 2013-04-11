@@ -52,11 +52,11 @@ foreach my $Number (0 .. 63) {
         my $address_f2 = sprintf "$Number1.$Number2.$Number3.$Number6";
 
         $tester {$base} -> match ($address_p1,
-                                  captures => [[IPv4   => $address_p1],
-                                               [octet1 => $Number1],
-                                               [octet2 => $Number2],
-                                               [octet3 => $Number3],
-                                               [octet4 => $Number4]]);
+                                  captures => [[IPv4  => $address_p1],
+                                               [octet => $Number1],
+                                               [octet => $Number2],
+                                               [octet => $Number3],
+                                               [octet => $Number4]]);
         $tester {$base} -> no_match ($address_f1,
                                      reason => "Leading octet to big");
         $tester {$base} -> no_match ($address_f2,

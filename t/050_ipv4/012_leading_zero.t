@@ -45,11 +45,11 @@ foreach my $item ([bin => 0b1111111],
 
         $tester {$base} -> match ($address,
                                   test     => "Leading zeros",
-                                  captures => [[IPv4   => $address],
-                                               [octet1 => $number],
-                                               [octet2 => $number],
-                                               [octet3 => $number],
-                                               [octet4 => $number]]);
+                                  captures => [[IPv4  => $address],
+                                               [octet => $number],
+                                               [octet => $number],
+                                               [octet => $number],
+                                               [octet => $number]]);
 
         $address = $c % 4 == 0 ? "0$number.$number.$number.$number"
                  : $c % 4 == 1 ? "$number.0$number.$number.$number"
