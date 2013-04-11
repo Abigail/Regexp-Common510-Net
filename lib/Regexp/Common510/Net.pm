@@ -31,7 +31,7 @@ my %IP4unit = (
 pattern  Net       => 'IPv4',
          -config   => {
             -sep   =>  '\.',
-            -base  =>   10,
+            -base  =>  'dec',
          },
          -pattern  => \&IPv4,
 ;
