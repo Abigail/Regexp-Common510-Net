@@ -55,11 +55,11 @@ foreach my $Number (0 .. 300) {
             next if $base eq 'HEX' && $test ne 'HEX' && $number =~ /^[0-9]+$/;
             if ($Number <= 255) {
                 $tester {$test} -> match ($address,
-                                          captures => [[IPv4  => $address],
-                                                       [byte1 => $number],
-                                                       [byte2 => $number],
-                                                       [byte3 => $number],
-                                                       [byte4 => $number]]);
+                                          captures => [[IPv4   => $address],
+                                                       [octet1 => $number],
+                                                       [octet2 => $number],
+                                                       [octet3 => $number],
+                                                       [octet4 => $number]]);
             }
             else {
                 $tester {$test} -> no_match ($address);

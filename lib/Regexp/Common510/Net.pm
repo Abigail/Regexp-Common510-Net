@@ -46,7 +46,7 @@ sub IPv4 {
     warnings::warn ("Unknown -base '$base', falling back to default 'dec'\n")
        if (!$base || !$IP4unit {$base}) && warnings::enabled;
 
-    my $byte = $IP4unit {$base};
+    my $octet = $IP4unit {$base};
 
     my $sep = $args {-sep};
     eval {qr /$sep/} or do {
@@ -57,10 +57,10 @@ sub IPv4 {
     };
 
     return '(?k<IPv4>:'                .
-           "(?k<byte1>:$byte)(?:$sep)" .
-           "(?k<byte2>:$byte)(?:$sep)" .
-           "(?k<byte3>:$byte)(?:$sep)" .
-           "(?k<byte4>:$byte))";
+           "(?k<octet1>:$octet)(?:$sep)" .
+           "(?k<octet2>:$octet)(?:$sep)" .
+           "(?k<octet3>:$octet)(?:$sep)" .
+           "(?k<octet4>:$octet))";
 }
 
 

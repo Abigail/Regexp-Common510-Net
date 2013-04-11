@@ -51,11 +51,11 @@ foreach my $base (qw [bin oct dec hex]) {
                                       $$a [2], '.',  $$a [3];
             $test -> match ($address_p1,
                             captures => [
-                                [IPv4  => $address_p1],
-                                [byte1 => sprintf ($format => $$a [0])],
-                                [byte2 => sprintf ($format => $$a [1])],
-                                [byte3 => sprintf ($format => $$a [2])],
-                                [byte4 => sprintf ($format => $$a [3])]]);
+                                [IPv4   => $address_p1],
+                                [octet1 => sprintf ($format => $$a [0])],
+                                [octet2 => sprintf ($format => $$a [1])],
+                                [octet3 => sprintf ($format => $$a [2])],
+                                [octet4 => sprintf ($format => $$a [3])]]);
 
             $test -> no_match ($address_f1,
                                reason => "Incorrect separator");
@@ -87,11 +87,11 @@ foreach my $base (qw [bin oct dec hex]) {
 
         $test -> match ($address_p1,
                         captures => [
-                            [IPv4  => $address_p1],
-                            [byte1 => sprintf ($format => $$a [0])],
-                            [byte2 => sprintf ($format => $$a [1])],
-                            [byte3 => sprintf ($format => $$a [2])],
-                            [byte4 => sprintf ($format => $$a [3])]]);
+                            [IPv4   => $address_p1],
+                            [octet1 => sprintf ($format => $$a [0])],
+                            [octet2 => sprintf ($format => $$a [1])],
+                            [octet3 => sprintf ($format => $$a [2])],
+                            [octet4 => sprintf ($format => $$a [3])]]);
 
         $test -> no_match ($address_f1,
                            reason => "Second separator too long");
