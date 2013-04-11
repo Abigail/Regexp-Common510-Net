@@ -24,11 +24,6 @@ foreach my $base (qw [bin oct dec hex]) {
               name         => "Net IPv4 -base => $base"
     );
 }
-$tester {default} = Test::Regexp:: -> new -> init (
-          pattern      => RE (Net => 'IPv4', -Keep => 0),
-          keep_pattern => RE (Net => 'IPv4', -Keep => 1),
-          name         => "Net IPv4",
-);
 
 my %format =  (
     bin      => '%b',
