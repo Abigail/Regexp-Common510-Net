@@ -6,7 +6,6 @@
      - Testing:
          - Match:
          - No match:
-             - Using hex for dec; hex/dec for oct; hex/dec/oct for bin
              - Garbage (trailing, leading)
 
 
