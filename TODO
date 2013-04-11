@@ -3,11 +3,6 @@
 
 - IPv4:
      - Document pattern
-     - Testing:
-         - Match:
-         - No match:
-             - Garbage (trailing, leading)
-
 
 - IPv6
      - Create pattern
