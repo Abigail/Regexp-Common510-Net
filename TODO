@@ -1,9 +1,7 @@
 - IPv4:
-     - Rename <byte> to <octet>?
      - Testing:
          - Match:
              - Different combinations of numbers
-             - Different separator
          - No match:
              - Missing octets
              - Extra octest
