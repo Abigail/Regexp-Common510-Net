@@ -28,13 +28,14 @@ my %IP4unit = (
 );
 
 
-pattern  Net           => 'IPv4',
-         -config       => {
-            -sep       =>  '\.',
-            -base      =>   10,
+pattern  Net       => 'IPv4',
+         -config   => {
+            -sep   =>  '\.',
+            -base  =>   10,
          },
-         -pattern      => \&IPv4,
+         -pattern  => \&IPv4,
 ;
+
 
 
 sub IPv4 {
