@@ -1,7 +1,6 @@
 - IPv4:
      - Testing:
          - Match:
-             - Different combinations of numbers
          - No match:
              - Missing octets
              - Extra octest
