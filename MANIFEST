@@ -15,6 +15,7 @@ t/050_ipv4/840_garbage.t
 t/060_mac/001_first.t
 t/060_mac/010_basic.t
 t/060_mac/011_basic.t
+t/060_mac/012_leading_zero.t
 t/950_pod.t
 t/960_pod_coverage.t
 Changes
