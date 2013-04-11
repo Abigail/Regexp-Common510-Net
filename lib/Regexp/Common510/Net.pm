@@ -123,6 +123,23 @@ characters long, while hexadecimal octets are not longer than 2 characters.
 
 Empty octets are not allowed.
 
+=head3 Capturing
+
+If the C<< -Keep >> option is used (see L<< Regexp::Common510 >>), the
+following named captures are done:
+
+=over 2
+
+=item C<< IPv4 >>
+
+The entire address.
+
+=item C<< octet1 >> .. C<< octet4 >>
+
+The four octets.
+
+=back 
+
 =head3 Examples
 
  "127.0.0.1"      =~ RE Net => 'IPv4';
@@ -131,6 +148,14 @@ Empty octets are not allowed.
  "7f.0.0.1"       =~ RE Net => 'IPv4', -base => 'HeX';
  "7F.0.0.1"       !~ RE Net => 'IPv4', -base => 'hex';
  "01111111.0.0.1" =~ RE Net => 'IPv4', -base => 2;
+
+ "127.0.0.1"      =~ RE Net => 'IPv4', -Keep => 1;
+ say $+ {IPv4};         # 127.0.0.1
+ say $+ {octet1};       # 127
+ say $+ {octet2};       #   0
+ say $+ {octet3};       #   0
+ say $+ {octet4};       #   1
+
 
 =head1 BUGS
 
