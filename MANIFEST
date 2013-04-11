@@ -7,9 +7,9 @@ t/050_ipv4/010_basic.t
 t/050_ipv4/011_basic.t
 t/050_ipv4/012_leading_zero.t
 t/050_ipv4/050_sep.t
-t/050_ipv4/100_octets.t
-t/050_ipv4/110_casing.t
-t/050_ipv4/120_separators.t
+t/050_ipv4/800_octets.t
+t/050_ipv4/810_casing.t
+t/050_ipv4/820_separators.t
 t/950_pod.t
 t/960_pod_coverage.t
 Changes
