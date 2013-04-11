@@ -36,6 +36,13 @@ pattern  Net         => 'IPv4',
          -pattern    => \&constructor,
 ;
 
+pattern  Net         => 'MAC',
+         -config     => {
+            -sep     =>  ':',
+            -base    =>  'HeX',
+         },
+         -pattern    => \&constructor,
+;
 
 
 sub constructor {
@@ -59,11 +66,10 @@ sub constructor {
                if warnings::enabled;
     };
 
-    return "(?k<$name>:"                .
-           "(?k<octet>:$octet)(?:$sep)" .
-           "(?k<octet>:$octet)(?:$sep)" .
-           "(?k<octet>:$octet)(?:$sep)" .
-           "(?k<octet>:$octet))";
+    return "(?k<$name>:"                                                .
+           join ("(?:$sep)" =>
+                    ("(?k<octet>:$octet)") x ($name eq 'IPv4' ? 4 : 6)) .
+           ")";
 }
 
 
