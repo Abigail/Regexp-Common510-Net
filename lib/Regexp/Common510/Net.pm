@@ -28,18 +28,20 @@ my %IP4unit = (
 );
 
 
-pattern  Net       => 'IPv4',
-         -config   => {
-            -sep   =>  '\.',
-            -base  =>  'dec',
+pattern  Net         => 'IPv4',
+         -config     => {
+            -sep     =>  '\.',
+            -base    =>  'dec',
          },
-         -pattern  => \&IPv4,
+         -pattern    => \&constructor,
 ;
 
 
 
-sub IPv4 {
+sub constructor {
     my %args = @_;
+
+    my $name = $args {-Name} [0];
 
     my $base = $args {-base};
        $base = $IP4map {$base} if $IP4map {$base};
@@ -57,7 +59,7 @@ sub IPv4 {
                if warnings::enabled;
     };
 
-    return '(?k<IPv4>:'                 .
+    return "(?k<$name>:"                .
            "(?k<octet>:$octet)(?:$sep)" .
            "(?k<octet>:$octet)(?:$sep)" .
            "(?k<octet>:$octet)(?:$sep)" .
