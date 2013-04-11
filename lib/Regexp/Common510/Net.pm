@@ -74,7 +74,63 @@ Regexp::Common510::Net - Abstract
 
 =head1 SYNOPSIS
 
+ use Regexp::Common510 'Net';
+
+ my $pat = RE Net => 'IPv4';
+
+ "127.0.0.1" =~ /$pat/ and say "IP address found";
+
 =head1 DESCRIPTION
+
+This module deliver pattern related to network entities. It should not be
+used directly, but loaded using C<< Regexp::Common510 >>. See that module
+for a general description of the interface.
+
+This module provides the following patterns:
+
+=head2 C<< IPv4 >>
+
+The C<< IPv4 >> pattern matches IP version 4 addresses. By default, it
+matches against addresses written in decimals, and separated by dots.
+But this can be configured. The following configuration parameters are
+available:
+
+=over 2
+
+=item C<< -sep => PAT >> (default C<< '\.' >>)
+
+The separator being used, by default a dot. If one wants to match IP addresses
+where the octets are separated by semi-colons, one would do:
+
+  $pat = RE Net => 'IPv4', -sep => ':';
+
+=item C<< -base => 2|bin|8|oct|10|dec|16|hex|HeX|HEX >> (default C<< dec >>).
+
+Specifies whether the octets should be binary, octal, decimal or hexadecimal,
+with decimal being the default. Use C<< bin >> or C<< 2 >> for octets in
+binary, C<< 8 >> or C<< oct >> for octets in octal, and C<< 10 >> or C<< dec >>
+for octets in decimal. For hexadecimal, there are a few more options:
+C<< 16 >> and C<< HeX >> specify that the hexadecimal numbers may be specified
+in either lower case C<< [a-f] >> or upper case C<< [A-F] >>; C<< hex >> only
+allows hexadecimal digits in lower case, and C<< HEX >> in upper case.
+
+=back
+
+Leading zeros are allowed, but the octet may not be longer than it would
+take to represent 255 (the maximum value of an octet); so a binary octet 
+is at most 8 characters long, octal and decimal octets are at most 3
+characters long, while hexadecimal octets are not longer than 2 characters.
+
+Empty octets are not allowed.
+
+=head3 Examples
+
+ "127.0.0.1"      =~ RE Net => 'IPv4';
+ "127 0 0 1"      =~ RE Net => 'IPv4', -sep  => ' ';
+ "7f.0.0.1"       =~ RE Net => 'IPv4', -base => 'hex';
+ "7f.0.0.1"       =~ RE Net => 'IPv4', -base => 'HeX';
+ "7F.0.0.1"       !~ RE Net => 'IPv4', -base => 'hex';
+ "01111111.0.0.1" =~ RE Net => 'IPv4', -base => 2;
 
 =head1 BUGS
 
