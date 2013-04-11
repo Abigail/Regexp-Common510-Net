@@ -3,7 +3,6 @@
          - Match:
          - No match:
              - Using hex for dec; hex/dec for oct; hex/dec/oct for bin
-             - Wrong casing for hex/HEX
              - Wrong separator
              - Additional/leading/trailing separator
              - Garbage (trailing, leading)
