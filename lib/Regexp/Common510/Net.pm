@@ -11,14 +11,14 @@ use Regexp::Common510;
 
 use warnings::register;
 
-my %IP4map  = (
+my %octet_map  = (
     16      => 'HeX',
     10      => 'dec',
      8      => 'oct',
      2      => 'bin',
 );
 
-my %IP4unit = (
+my %octet_unit = (
     dec => q {25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2}},
     oct => q {[0-3]?[0-7]{1,2}},
     hex => q {[0-9a-f]{1,2}},
@@ -51,12 +51,12 @@ sub constructor {
     my $name = $args {-Name} [0];
 
     my $base = $args {-base};
-       $base = $IP4map {$base} if $IP4map {$base};
+       $base = $octet_map {$base} if $octet_map {$base};
 
     warnings::warn ("Unknown -base '$base', falling back to default 'dec'\n")
-       if (!$base || !$IP4unit {$base}) && warnings::enabled;
+       if (!$base || !$octet_unit {$base}) && warnings::enabled;
 
-    my $octet = $IP4unit {$base};
+    my $octet = $octet_unit {$base};
 
     my $sep = $args {-sep};
     eval {qr /$sep/} or do {
