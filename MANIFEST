@@ -23,6 +23,7 @@ t/060_mac/820_separators.t
 t/060_mac/830_base.t
 t/060_mac/840_garbage.t
 t/100_domain/001_first.t
+t/100_domain/010_base.t
 t/950_pod.t
 t/960_pod_coverage.t
 Changes
