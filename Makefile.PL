@@ -28,6 +28,7 @@ my %args = (
     PREREQ_PM            => {
         'strict'             =>  0,
         'warnings'           =>  0,
+        'Regexp::Common510   =>  0,
     },
     MIN_PERL_VERSION     =>   5.006,
     AUTHOR               =>  "$ME <$LOCAL_ADDR\@$DOMAIN>",
@@ -37,6 +38,7 @@ my %args = (
             'strict'             => 0,
             'warnings'           => 0,
             'Test::More'         => 0.88,
+            'Test::Regexp'       => 2013041201,
         },
         resources        => {
             repository   => $REPOSITORY,
