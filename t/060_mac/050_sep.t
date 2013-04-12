@@ -14,6 +14,7 @@ our $r = eval "require Test::NoWarnings; 1";
 
 my @addresses = (
     ['01', '23', '45', '67', '89', 'AB'],
+    ['00', '00', '00', '00', '00', '00'],
     ['FF', 'FF', 'FF', 'FF', 'FF', 'FF'],
 );
 
