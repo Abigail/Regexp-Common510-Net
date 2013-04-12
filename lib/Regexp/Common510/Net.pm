@@ -168,6 +168,80 @@ of them. (<< @{$- {octet}} >> lists them all).
  say $- {octet} [3];    #   1
 
 
+
+=head2 C<< MAC >>
+
+The C<< MAC >> pattern matches MAC addresses (or formally known as
+I<< EUI-48 >> addresses), which are used for various network related
+technologies, perhaps most notably for Ethernet addresses.
+
+By default, the pattern recognizes addresses that are written using
+hexadecimal numbers, with each octet separated by colons (C<< : >>).
+But this can be configured using the following parameters:
+
+=over 2
+
+=item C<< -sep => PAT >> (default C<< ':' >>)
+
+The separator being used, by default a colon. If one wants to match MAC
+addresses where the octets are separated by dots, one would do:
+
+  $pat = RE Net => 'MAC', -sep => '\.';
+
+=item C<< -base => 2|bin|8|oct|10|dec|16|hex|HeX|HEX >> (default C<< HeX >>).
+
+Specifies whether the octets should be binary, octal, decimal or hexadecimal,
+with decimal being the default. Use C<< bin >> or C<< 2 >> for octets in
+binary, C<< 8 >> or C<< oct >> for octets in octal, and C<< 10 >> or C<< dec >>
+for octets in decimal. For hexadecimal, there are a few more options:
+C<< 16 >> and C<< HeX >> specify that the hexadecimal numbers may be specified
+in either lower case C<< [a-f] >> or upper case C<< [A-F] >>; C<< hex >> only
+allows hexadecimal digits in lower case, and C<< HEX >> in upper case.
+
+=back
+
+Leading zeros are allowed, but the octet may not be longer than it would
+take to represent 255 (the maximum value of an octet); so a binary octet 
+is at most 8 characters long, octal and decimal octets are at most 3
+characters long, while hexadecimal octets are not longer than 2 characters.
+
+Empty octets are not allowed.
+
+=head3 Capturing
+
+If the C<< -Keep >> option is used (see L<< Regexp::Common510 >>), the
+following named captures are done:
+
+=over 2
+
+=item C<< MAC >>
+
+The entire address.
+
+=item C<< octet >>
+
+The six octets. Note that there are six capture groups with the name
+C<< octet >>, so one has to look at C<< $- {octet} >> to inspect all
+of them. (<< @{$- {octet}} >> lists them all).
+
+=back 
+
+=head3 Examples
+
+ "01:23:45:67:89:AB"      =~ RE Net => 'MAC';
+ "01-23-45-67-89-AB"      =~ RE Net => 'MAC', -sep  => '-';
+ "1:35:69:103:137:171"    =~ RE Net => 'MAC', -base => 'dec';
+ "01:23:45:67:89:AB"      !~ RE Net => 'MAC', -base => 'hex';
+
+ "01:23:45:67:89:AB"      =~ RE Net => 'MAC', -Keep =>  1;
+  say $+ {MAC};                 # 01:23:45:67:89:AB
+  say $- {octet} [0];           # 01
+  say $- {octet} [1];           # 23
+  say $- {octet} [2];           # 45
+  say $- {octet} [3];           # 67
+  say $- {octet} [4];           # 89
+  say $- {octet} [5];           # AB
+
 =head1 BUGS
 
 =head1 TODO
