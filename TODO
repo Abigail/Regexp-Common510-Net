@@ -19,7 +19,15 @@
            - RFC 1035 and 2181 mention the domain name is limited
              to 255 characters.
      - Document pattern
-     - Tests
+     - Tests:
+         - single space
+         - leading numbers
+         - leading/trailing dashes (fail)
+         - double/leading/trailing dots (fail)
+         - length of labels
+         - illegal characters (fail)
+         - empty string (fail)
+         - TODO test (hack Test::Regexp?) for names exceeding 255 characters
 
      - From RFC 4343:
         5. Internationalized Domain Names
