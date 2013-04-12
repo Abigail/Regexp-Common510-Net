@@ -52,6 +52,15 @@ pattern  Net         => 'MAC',
          -pattern    => \&constructor,
 ;
 
+pattern  Net         => 'domain',
+         -config     => {
+            -rfc1035     =>  0,
+            -allow_space =>  0,
+         },
+         -pattern    => \&domain_constructor,
+;
+
+
 
 sub constructor {
     my %args    = @_;
@@ -81,6 +90,36 @@ sub constructor {
          . ")";
 }
 
+
+my $letter      =  "[A-Za-z]";
+my $let_dig     =  "[A-Za-z0-9]";
+my $let_dig_hyp = "[-A-Za-z0-9]";
+
+sub domain_constructor {
+    my %args    = @_;
+
+    my $lead;
+
+    #
+    # RFC 1101 allows host and domain names to start with a digit,
+    # while the original RFC 1035 did not allow that. However, if
+    # it starts with a digit, it may not look like an IPv4 address.
+    #
+    if ($args {-rfc1035}) {
+        $lead = $letter;
+    }
+    else {
+        my $IPv4 = Regexp::Common510::RE (Net => 'IPv4', -sep  => '\.',
+                                                         -base => 'dec');
+        $lead = "(?!$IPv4(?:[.]|\$))$let_dig";
+    }
+
+    my $part   = "$lead(?:(?:$let_dig_hyp){0,61}$let_dig)?";
+    my $domain = "$part(?:\\.$part)*";
+       $domain = "(?: |$domain)" if $args {-allow_space};
+
+    return "(?k<domain>:$domain)";
+}
 
 1;
 
