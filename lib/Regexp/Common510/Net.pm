@@ -109,7 +109,7 @@ available:
 =item C<< -sep => PAT >> (default C<< '\.' >>)
 
 The separator being used, by default a dot. If one wants to match IP addresses
-where the octets are separated by semi-colons, one would do:
+where the octets are separated by colons, one would do:
 
   $pat = RE Net => 'IPv4', -sep => ':';
 
@@ -147,7 +147,7 @@ The entire address.
 
 The four octets. Note that there are four capture groups with the name
 C<< octet >>, so one has to look at C<< $- {octet} >> to inspect all
-of them.
+of them. (<< @{$- {octet}} >> lists them all).
 
 =back 
 
@@ -158,14 +158,14 @@ of them.
  "7f.0.0.1"       =~ RE Net => 'IPv4', -base => 'hex';
  "7f.0.0.1"       =~ RE Net => 'IPv4', -base => 'HeX';
  "7F.0.0.1"       !~ RE Net => 'IPv4', -base => 'hex';
- "01111111.0.0.1" =~ RE Net => 'IPv4', -base => 2;
+ "01111111.0.0.1" =~ RE Net => 'IPv4', -base =>  2;
 
- "127.0.0.1"      =~ RE Net => 'IPv4', -Keep => 1;
+ "127.0.0.1"      =~ RE Net => 'IPv4', -Keep =>  1;
  say $+ {IPv4};         # 127.0.0.1
- say $+ {octet1};       # 127
- say $+ {octet2};       #   0
- say $+ {octet3};       #   0
- say $+ {octet4};       #   1
+ say $- {octet} [0];    # 127
+ say $- {octet} [1];    #   0
+ say $- {octet} [2];    #   0
+ say $- {octet} [3];    #   1
 
 
 =head1 BUGS
