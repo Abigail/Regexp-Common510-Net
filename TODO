@@ -2,19 +2,37 @@
      - Document module
 
 - IPv4:
-     - Document pattern
+     - Testing:
+          - Test the fallback behaviour of -base/-sep
 
 - IPv6
      - Create pattern
      - Document pattern
      - Tests
 
-- Mac addresses
+- Mac addresses:
+     - Testing:
+          - Test the fallback behaviour of -base/-sep
+
+- Domain names:
      - Create pattern
+           - RFC 1035 and 2181 mention the domain name is limited
+             to 255 characters.
      - Document pattern
      - Tests
 
-- Domain names
-     - Create pattern
-     - Document pattern
-     - Tests
+     - From RFC 4343:
+        5. Internationalized Domain Names
+	   A scheme has been adopted for "internationalized domain names" and
+           "internationalized labels" as described in [RFC3490, RFC3454,
+           RFC3491, and RFC3492].  It makes most of [UNICODE] available through
+           a separate application level transformation from internationalized
+           domain name to DNS domain name and from DNS domain name to
+	   internationalized domain name.  Any case insensitivity that
+           internationalized domain names and labels have varies depending on
+           the script and is handled entirely as part of the transformation
+           described in [RFC3454] and [RFC3491], which should be seen for
+           further details. This is not a part of the DNS as standardized in
+           STD 13.
+
+     - What to do with binary labels? [RFC 2673, 3363, 3364]
