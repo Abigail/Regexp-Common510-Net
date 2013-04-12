@@ -31,10 +31,11 @@ foreach my $base (qw [bin oct dec hex]) {
 
     foreach my $sep ('\.', ' ', "\x{1362}") {
         my $test = Test::Regexp:: -> new -> init (
-            pattern      => RE (Net => 'MAC', -base => $base, -sep => $sep,
+            pattern      =>  RE (Net => 'MAC', -base => $base, -sep => $sep,
                                                -Keep => 0),
-            keep_pattern => RE (Net => 'MAC', -base => $base, -sep => $sep,
+            keep_pattern =>  RE (Net => 'MAC', -base => $base, -sep => $sep,
                                                -Keep => 1),
+            full_text    =>  1,
             name         => "Net MAC -base => '$base', -sep => /$sep/"
         );
 
@@ -70,10 +71,11 @@ foreach my $base (qw [bin oct dec hex]) {
 
     my $sep  = ':{1,3}';
     my $test = Test::Regexp:: -> new -> init (
-        pattern      => RE (Net => 'MAC', -base => $base, -sep => $sep,
-                                          -Keep => 0),
-        keep_pattern => RE (Net => 'MAC', -base => $base, -sep => $sep,
-                                          -Keep => 1),
+        pattern      =>  RE (Net => 'MAC', -base => $base, -sep => $sep,
+                                           -Keep => 0),
+        keep_pattern =>  RE (Net => 'MAC', -base => $base, -sep => $sep,
+                                           -Keep => 1),
+        full_text    =>  1,
         name         => "Net MAC -base => '$base', -sep => /$sep/"
     );
 

@@ -7,7 +7,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2013040301;
+use Test::Regexp 2013041201;
 use Regexp::Common510 'Net';
 
 our $r = eval "require Test::NoWarnings; 1";
@@ -32,10 +32,11 @@ foreach my $base (qw [bin oct dec hex]) {
 
     foreach my $sep (':', ' ', "\x{1362}") {
         my $test = Test::Regexp:: -> new -> init (
-            pattern      => RE (Net => 'IPv4', -base => $base, -sep => $sep,
-                                               -Keep => 0),
-            keep_pattern => RE (Net => 'IPv4', -base => $base, -sep => $sep,
-                                               -Keep => 1),
+            pattern      =>  RE (Net => 'IPv4', -base => $base, -sep => $sep,
+                                                -Keep => 0),
+            keep_pattern =>  RE (Net => 'IPv4', -base => $base, -sep => $sep,
+                                                -Keep => 1),
+            full_text    =>  1,
             name         => "Net IPv4 -base => '$base', -sep => /$sep/"
         );
         
@@ -66,10 +67,11 @@ foreach my $base (qw [bin oct dec hex]) {
 
     my $sep  = ':{1,3}';
     my $test = Test::Regexp:: -> new -> init (
-        pattern      => RE (Net => 'IPv4', -base => $base, -sep => $sep,
-                                           -Keep => 0),
-        keep_pattern => RE (Net => 'IPv4', -base => $base, -sep => $sep,
-                                           -Keep => 1),
+        pattern      =>  RE (Net => 'IPv4', -base => $base, -sep => $sep,
+                                            -Keep => 0),
+        keep_pattern =>  RE (Net => 'IPv4', -base => $base, -sep => $sep,
+                                            -Keep => 1),
+        full_text    =>  1,
         name         => "Net IPv4 -base => '$base', -sep => /$sep/"
     );
 

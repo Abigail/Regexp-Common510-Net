@@ -7,7 +7,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2013040301;
+use Test::Regexp 2013041201;
 use Regexp::Common510 'Net';
 
 our $r = eval "require Test::NoWarnings; 1";
@@ -17,14 +17,16 @@ our $r = eval "require Test::NoWarnings; 1";
 #
 
 my $test_hex = Test::Regexp:: -> new -> init (
-      pattern      => RE (Net => 'MAC', -base => 'hex', -Keep => 0),
-      keep_pattern => RE (Net => 'MAC', -base => 'hex', -Keep => 1),
+      pattern      =>  RE (Net => 'MAC', -base => 'hex', -Keep => 0),
+      keep_pattern =>  RE (Net => 'MAC', -base => 'hex', -Keep => 1),
+      full_text    =>  1,
       name         => "Net MAC -base => hex"
 );
 
 my $test_HEX = Test::Regexp:: -> new -> init (
-      pattern      => RE (Net => 'MAC', -base => 'HEX', -Keep => 0),
-      keep_pattern => RE (Net => 'MAC', -base => 'HEX', -Keep => 1),
+      pattern      =>  RE (Net => 'MAC', -base => 'HEX', -Keep => 0),
+      keep_pattern =>  RE (Net => 'MAC', -base => 'HEX', -Keep => 1),
+      full_text    =>  1,
       name         => "Net MAC -base => HEX"
 );
 

@@ -7,7 +7,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2013040301;
+use Test::Regexp 2013041201;
 use Regexp::Common510 'Net';
 
 our $r = eval "require Test::NoWarnings; 1";
@@ -19,8 +19,9 @@ our $r = eval "require Test::NoWarnings; 1";
 my %tester;
 foreach my $base (qw [bin oct dec hex]) {
     $tester {$base} = Test::Regexp:: -> new -> init (
-              pattern      => RE (Net => 'MAC', -base => $base, -Keep => 0),
-              keep_pattern => RE (Net => 'MAC', -base => $base, -Keep => 1),
+              pattern      =>  RE (Net => 'MAC', -base => $base, -Keep => 0),
+              keep_pattern =>  RE (Net => 'MAC', -base => $base, -Keep => 1),
+              full_text    =>  1,
               name         => "Net MAC -base => $base"
     );
 }
