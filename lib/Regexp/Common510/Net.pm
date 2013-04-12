@@ -33,6 +33,10 @@ pattern  Net         => 'IPv4',
             -sep     =>  '\.',
             -base    =>  'dec',
          },
+         -extra_args => [
+            -nr_of_octets  =>  4,
+            -fallback_base => 'dec',
+         ],
          -pattern    => \&constructor,
 ;
 
@@ -41,22 +45,28 @@ pattern  Net         => 'MAC',
             -sep     =>  ':',
             -base    =>  'HeX',
          },
+         -extra_args => [
+            -nr_of_octets  =>  6,
+            -fallback_base => 'HeX',
+         ],
          -pattern    => \&constructor,
 ;
 
 
 sub constructor {
-    my %args = @_;
+    my %args    = @_;
 
-    my $name = $args {-Name} [0];
+    my $name    = $args {-Name} [0];
 
-    my $base = $args {-base};
-       $base = $octet_map {$base} if $octet_map {$base};
+    my $base    = $args {-base};
+       $base    = $octet_map {$base} if $octet_map {$base};
 
-    warnings::warn ("Unknown -base '$base', falling back to default 'dec'\n")
+    my $fb_base = $args {-fallback_base};
+
+    warnings::warn ("Unknown -base '$base', falling back to '$fb_base'\n")
        if (!$base || !$octet_unit {$base}) && warnings::enabled;
 
-    my $octet = $octet_unit {$base};
+    my $octet = $octet_unit {$base || ""} || $fb_base;
 
     my $sep = $args {-sep};
     eval {qr /$sep/} or do {
@@ -66,10 +76,9 @@ sub constructor {
                if warnings::enabled;
     };
 
-    return "(?k<$name>:"                                                .
-           join ("(?:$sep)" =>
-                    ("(?k<octet>:$octet)") x ($name eq 'IPv4' ? 4 : 6)) .
-           ")";
+    return "(?k<$name>:"
+         . join ("(?:$sep)" => ("(?k<octet>:$octet)") x $args {-nr_of_octets})
+         . ")";
 }
 
 
