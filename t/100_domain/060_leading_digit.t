@@ -38,8 +38,6 @@ my $test_space_1035 =   Test::Regexp:: -> new -> init (
     name            => "Net domain -allow_space => 1",
 );
 
-my @tests = ($test_default, $test_1035, $test_space, $test_space_1035);
-
 #
 # Make it so that the GCD of the sizes of each pair of sets is 1.
 #
