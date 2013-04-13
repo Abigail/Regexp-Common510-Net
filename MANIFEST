@@ -25,6 +25,7 @@ t/060_mac/840_garbage.t
 t/100_domain/001_first.t
 t/100_domain/010_base.t
 t/100_domain/050_allow_space.t
+t/100_domain/060_leading_digit.t
 t/950_pod.t
 t/960_pod_coverage.t
 Changes
