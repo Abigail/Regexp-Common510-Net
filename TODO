@@ -24,6 +24,7 @@
          - length of labels
          - illegal characters (fail)
          - empty string (fail)
+         - garbage (fail)
          - TODO test (hack Test::Regexp?) for names exceeding 255 characters
 
      - From RFC 4343:
