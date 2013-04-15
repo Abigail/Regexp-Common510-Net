@@ -20,7 +20,6 @@
              to 255 characters.
      - Document pattern
      - Tests:
-         - double/leading/trailing dots (fail)
          - length of labels
          - illegal characters (fail)
          - empty string (fail)
