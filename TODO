@@ -19,8 +19,6 @@
            - RFC 1035 and 2181 mention the domain name is limited
              to 255 characters.
      - Document pattern
-     - Tests:
-         - address should not look like an IP address
 
      - From RFC 4343:
         5. Internationalized Domain Names

@@ -28,6 +28,7 @@ t/100_domain/050_allow_space.t
 t/100_domain/060_leading_digit.t
 t/100_domain/070_hyphen.t
 t/100_domain/080_length.t
+t/100_domain/090_ip.t
 t/100_domain/800_separator.t
 t/100_domain/810_separator.t
 t/950_pod.t
