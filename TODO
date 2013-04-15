@@ -20,12 +20,10 @@
              to 255 characters.
      - Document pattern
      - Tests:
-         - length of labels
          - address should not look like an IP address
          - illegal characters (fail)
          - empty string (fail)
          - garbage (fail)
-         - TODO test (hack Test::Regexp?) for names exceeding 255 characters
 
      - From RFC 4343:
         5. Internationalized Domain Names
