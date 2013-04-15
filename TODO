@@ -21,6 +21,7 @@
      - Document pattern
      - Tests:
          - length of labels
+         - address should not look like an IP address
          - illegal characters (fail)
          - empty string (fail)
          - garbage (fail)
