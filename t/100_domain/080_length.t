@@ -61,7 +61,6 @@ foreach my $address (@fail) {
 }
 
 
-<<<<<<< HEAD
 #
 # The maximum length of a name is 255 characters. This is not checked
 # by the patterns yet -- hence a TODO test.
@@ -74,8 +73,6 @@ foreach my $test (@tests) {
                         todo => "Name length check not implemented");
 }
 
-=======
->>>>>>> a61a5e20921b01f483f43f31410b1312c6babb8b
 
 Test::NoWarnings::had_no_warnings () if $r;
 
