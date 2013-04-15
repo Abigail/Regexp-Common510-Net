@@ -21,9 +21,6 @@
      - Document pattern
      - Tests:
          - address should not look like an IP address
-         - illegal characters (fail)
-         - empty string (fail)
-         - garbage (fail)
 
      - From RFC 4343:
         5. Internationalized Domain Names
