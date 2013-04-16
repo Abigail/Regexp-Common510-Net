@@ -2,8 +2,6 @@
      - Document module
 
 - IPv4:
-     - Testing:
-          - Test the fallback behaviour of -base/-sep
 
 - IPv6
      - Create pattern
@@ -11,8 +9,6 @@
      - Tests
 
 - Mac addresses:
-     - Testing:
-          - Test the fallback behaviour of -base/-sep
 
 - Domain names:
      - Create pattern

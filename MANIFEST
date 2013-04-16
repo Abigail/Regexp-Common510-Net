@@ -19,6 +19,8 @@ t/060_mac/010_basic.t
 t/060_mac/011_basic.t
 t/060_mac/012_leading_zero.t
 t/060_mac/050_sep.t
+t/060_mac/100_fallback.t
+t/060_mac/101_fallback.t
 t/060_mac/800_octets.t
 t/060_mac/810_casing.t
 t/060_mac/820_separators.t
