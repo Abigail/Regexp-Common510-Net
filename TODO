@@ -11,10 +11,11 @@
 - Mac addresses:
 
 - Domain names:
-     - Create pattern
-           - RFC 1035 and 2181 mention the domain name is limited
-             to 255 characters.
      - Document pattern
+
+     - RFC 1035 and 2181 mention the domain name is limited
+       to 255 characters. Currently, the pattern does not check
+       for this. (But there is a TODO test).
 
      - From RFC 4343:
         5. Internationalized Domain Names
