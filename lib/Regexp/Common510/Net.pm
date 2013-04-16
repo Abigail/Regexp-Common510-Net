@@ -292,6 +292,62 @@ of them. (<< @{$- {octet}} >> lists them all).
   say $- {octet} [4];           # 89
   say $- {octet} [5];           # AB
 
+
+
+=head2 C<< domain >>
+
+The C<< domain >> pattern matches domain names (and host names) as defined
+by RFC 1035 and RFC 1101. Domain names consist of one or more so-called
+labels, with the labels separated by dots. Labels consist of (ASCII) letters,
+digits and hyphens. A label may not start or end with a hyphen.
+
+RFC 1035 forbids labels to start with a digit, but RFC 1101 has relaxed
+this restriction; labels are allowed to start with digits, as long as
+the result does not appear to contain an IP address. By default, the 
+pattern follows the RFC 1101 relaxation. Hence, domains like C<< 3M.com >>
+and C<< 92920v.nl >> will be recognized.
+
+A single space is also a valid domain name. However, for most applications
+using this pattern this is undesired behaviour; hence, by default, the
+pattern will B<< not >> match a single space.
+
+The pattern can be configured as follows:
+
+=over 2
+
+=item C<< -rfc1035 => BOOL >> (default false)
+
+If the C<< -rfc1035 >> parameter is given, the pattern will not allow
+labels to start with digits (as per RFC 1035).
+
+=item C<< -allow_space => BOOL >> (default false)
+
+If the C<< -allow_space >> parameter is given, the pattern will match
+a single space as well.
+
+=back
+
+=head3 Capturing
+
+If the C<< -Keep >> option is used (see L<< Regexp::Common510 >>), only
+one capture is done, named C<< domain >>, which matches the entire domain.
+
+=head3 Caveat
+
+RFC 1035 limits domain names to 255 characters. The pattern does B<< not >>
+check for this limit. (Labels are limited to 63 characters, and the pattern
+does check against that).
+
+=head3 Examples
+
+  "www.example.com"       =~ RE Net => 'domain';
+  "some-host-name"        =~ RE Net => 'domain';
+  "3M.com"                =~ RE Net => 'domain';
+  "3M.com"                !~ RE Net => 'domain', -rfc1035     => 1;
+  " "                     !~ RE Net => 'domain';
+  " "                     =~ RE Net => 'domain', -allow_space => 1;
+
+
 =head1 BUGS
 
 =head1 TODO
