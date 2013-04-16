@@ -79,9 +79,9 @@ sub constructor {
 
     my $sep = $args {-sep};
     eval {qr /$sep/} or do {
+        warn ("Cannot compile pattern /$sep/ for the separator -- " .
+              "falling back to default /\\./\n") if $warn;
         $sep = '\.';
-        warn ("Cannot compile pattern '$sep' for the separator -- " .
-              "failling back to default /\\./\n") if $warn;
     };
 
     return "(?k<$name>:"
