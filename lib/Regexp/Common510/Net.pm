@@ -35,6 +35,7 @@ pattern  Net         => 'IPv4',
          -extra_args => [
             -nr_of_octets  =>  4,
             -fallback_base => 'dec',
+            -fallback_sep  => '\.',
          ],
          -pattern    => \&constructor,
 ;
@@ -47,6 +48,7 @@ pattern  Net         => 'MAC',
          -extra_args => [
             -nr_of_octets  =>  6,
             -fallback_base => 'HeX',
+            -fallback_sep  => ':',
          ],
          -pattern    => \&constructor,
 ;
@@ -79,9 +81,10 @@ sub constructor {
 
     my $sep = $args {-sep};
     eval {qr /$sep/} or do {
+        my $fb_sep = $args {-fallback_sep};
         warn ("Cannot compile pattern /$sep/ for the separator -- " .
-              "falling back to default /\\./\n") if $warn;
-        $sep = '\.';
+              "falling back to default /$fb_sep/\n") if $warn;
+        $sep = $fb_sep;
     };
 
     return "(?k<$name>:"
