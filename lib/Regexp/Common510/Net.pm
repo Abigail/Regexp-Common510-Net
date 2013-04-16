@@ -65,6 +65,7 @@ sub constructor {
     my %args    = @_;
 
     my $name    = $args {-Name} [0];
+    my $warn    = $args {-Warn};
 
     my $base    = $args {-base};
        $base    = $octet_map {$base} if $octet_map {$base};
@@ -72,15 +73,15 @@ sub constructor {
     my $fb_base = $args {-fallback_base};
 
     warn ("Unknown -base '$base', falling back to '$fb_base'\n")
-       if (!$base || !$octet_unit {$base});
+       if (!$base || !$octet_unit {$base}) && $warn;
 
-    my $octet = $octet_unit {$base || ""} || $fb_base;
+    my $octet = $octet_unit {$base || ""} || $octet_unit {$fb_base};
 
     my $sep = $args {-sep};
     eval {qr /$sep/} or do {
         $sep = '\.';
         warn ("Cannot compile pattern '$sep' for the separator -- " .
-              "failling back to default /\\./\n")
+              "failling back to default /\\./\n") if $warn;
     };
 
     return "(?k<$name>:"
