@@ -9,7 +9,6 @@ our $VERSION = '2013041001';
 
 use Regexp::Common510;
 
-use warnings::register;
 
 my %octet_map  = (
     16      => 'HeX',
@@ -72,17 +71,16 @@ sub constructor {
 
     my $fb_base = $args {-fallback_base};
 
-    warnings::warn ("Unknown -base '$base', falling back to '$fb_base'\n")
-       if (!$base || !$octet_unit {$base}) && warnings::enabled;
+    warn ("Unknown -base '$base', falling back to '$fb_base'\n")
+       if (!$base || !$octet_unit {$base});
 
     my $octet = $octet_unit {$base || ""} || $fb_base;
 
     my $sep = $args {-sep};
     eval {qr /$sep/} or do {
         $sep = '\.';
-        warnings::warn ("Cannot compile pattern '$sep' for the separator -- " .
-                        "failling back to default /\\./\n")
-               if warnings::enabled;
+        warn ("Cannot compile pattern '$sep' for the separator -- " .
+              "failling back to default /\\./\n")
     };
 
     return "(?k<$name>:"
