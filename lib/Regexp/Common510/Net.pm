@@ -62,6 +62,15 @@ pattern  Net         => 'domain',
 ;
 
 
+pattern  Net         => 'IPv6',
+         -config     => {
+            -leading_zero   =>  1,
+            -trailing_ipv4  =>  1,
+         },
+         -pattern    => \&ipv6_constructor,
+;
+
+
 
 sub constructor {
     my %args    = @_;
@@ -121,6 +130,15 @@ sub domain_constructor {
        $domain = "(?: |$domain)" if $args {-allow_space};
 
     return "(?k<domain>:$domain)";
+}
+
+
+
+#
+# IPv6 addresses discussed in RFC 2373
+#
+sub ipv6_constructor {
+    1;
 }
 
 1;
