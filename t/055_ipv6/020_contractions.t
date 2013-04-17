@@ -8,40 +8,9 @@ no  warnings 'syntax';
 
 use Test::More 0.88;
 use Test::Regexp 2013041201;
-use Regexp::Common510 'Net';
+use t::Patterns;
 
 our $r = eval "require Test::NoWarnings; 1";
-
-my $test_default    = Test::Regexp:: -> new -> init (
-    pattern         => RE (Net => 'IPv6', -Keep => 0),
-    keep_pattern    => RE (Net => 'IPv6', -Keep => 1),
-    full_text       => 1,
-    name            => "Net IPv6",
-);
-my $test_no_max_con = Test::Regexp:: -> new -> init (
-    pattern         => RE (Net => 'IPv6', -Keep => 0, -max_contraction => 0),
-    keep_pattern    => RE (Net => 'IPv6', -Keep => 1, -max_contraction => 0),
-    full_text       => 1,
-    name            => "Net IPv6 -max_contraction => 0",
-);
-my $test_single_con = Test::Regexp:: -> new -> init (
-    pattern         => RE (Net => 'IPv6', -Keep => 0, -single_contraction => 1),
-    keep_pattern    => RE (Net => 'IPv6', -Keep => 1, -single_contraction => 1),
-    full_text       => 1,
-    name            => "Net IPv6 -single_contraction => 1",
-);
-my $test_leading_zeros = Test::Regexp:: -> new -> init (
-    pattern         => RE (Net => 'IPv6', -Keep => 0, -leading_zeros => 1),
-    keep_pattern    => RE (Net => 'IPv6', -Keep => 1, -leading_zeros => 1),
-    full_text       => 1,
-    name            => "Net IPv6 -leading_zeros => 1",
-);
-my $test_rfc2373 = Test::Regexp:: -> new -> init (
-    pattern      => RE (Net => 'IPv6', -Keep => 0, -rfc2373 => 1),
-    keep_pattern => RE (Net => 'IPv6', -Keep => 1, -rfc2373 => 1),
-    full_text    => 1,
-    name         => "Net IPv6, -rfc2373 => 1",
-);
 
 
 my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
@@ -128,14 +97,14 @@ for (my $i = 0; $i <= 7; $i ++) {
                              map {[unit => $_]} @left,   ("") x $m, @right_nz);
 
         if ($m == 1) {
-            foreach my $test ($test_default, $test_no_max_con,
-                              $test_leading_zeros) {
+            foreach my $test ($IPv6_default, $IPv6_no_max_con,
+                              $IPv6_lz) {
                 $test -> no_match (
                     $address,
                     reason   => "Contraction of 1 unit"
                 )
             }
-            foreach my $test ($test_single_con, $test_rfc2373) {
+            foreach my $test ($IPv6_single_con, $IPv6_rfc2373) {
                 $test -> match (
                     $address,
                     test     => "Contraction of 1 unit",
@@ -144,9 +113,9 @@ for (my $i = 0; $i <= 7; $i ++) {
             }
         }
         else {
-            foreach my $test ($test_default, $test_no_max_con,
-                              $test_single_con, $test_leading_zeros,
-                              $test_rfc2373) {
+            foreach my $test ($IPv6_default, $IPv6_no_max_con,
+                              $IPv6_single_con, $IPv6_lz,
+                              $IPv6_rfc2373) {
                 $test -> match (
                     $address,
                     test     => "Contraction ${l}::${r}",
@@ -155,14 +124,14 @@ for (my $i = 0; $i <= 7; $i ++) {
             }
 
             if ($l) {
-                foreach my $test ($test_default, $test_single_con,
-                                  $test_leading_zeros) {
+                foreach my $test ($IPv6_default, $IPv6_single_con,
+                                  $IPv6_lz) {
                     $test -> no_match (
                         $address_zl,
                          reason => "0 unit before contraction",
                     );
                 }
-                foreach my $test ($test_no_max_con, $test_rfc2373) {
+                foreach my $test ($IPv6_no_max_con, $IPv6_rfc2373) {
                     $test -> match (
                         $address_zl,
                         test     => "0 unit before contraction",
@@ -171,14 +140,14 @@ for (my $i = 0; $i <= 7; $i ++) {
                 }
 
 
-                foreach my $test ($test_default, $test_single_con,
-                                  $test_no_max_con) {
+                foreach my $test ($IPv6_default, $IPv6_single_con,
+                                  $IPv6_no_max_con) {
                     $test -> no_match (
                         $address_lzl,
                         reason   => "Leading zero before contraction"
                     );
                 }
-                foreach my $test ($test_leading_zeros, $test_rfc2373) {
+                foreach my $test ($IPv6_lz, $IPv6_rfc2373) {
                     $test -> match (
                         $address_lzl,
                         test     => "Leading zero before contraction",
@@ -187,13 +156,13 @@ for (my $i = 0; $i <= 7; $i ++) {
                 }
 
 
-                foreach my $test ($test_leading_zeros) {
+                foreach my $test ($IPv6_lz) {
                     $test -> no_match (
                         $address_mzl,
                         reason   => "Multiple zeros before contraction",
                     );
                 }
-                foreach my $test ($test_rfc2373) {
+                foreach my $test ($IPv6_rfc2373) {
                     $test -> match (
                         $address_mzl,
                         test     => "Multiple zeros before contraction",
@@ -204,9 +173,9 @@ for (my $i = 0; $i <= 7; $i ++) {
             
 
             if ($l > 1) {
-                foreach my $test ($test_default, $test_no_max_con,
-                                  $test_leading_zeros, $test_single_con,
-                                  $test_rfc2373) {
+                foreach my $test ($IPv6_default, $IPv6_no_max_con,
+                                  $IPv6_lz, $IPv6_single_con,
+                                  $IPv6_rfc2373) {
                     $test -> match (
                         $address_nzl,
                         test     => "Non-flanking zero left of contraction",
@@ -216,14 +185,14 @@ for (my $i = 0; $i <= 7; $i ++) {
             }
 
             if ($r) {
-                foreach my $test ($test_default, $test_single_con,
-                                  $test_leading_zeros) {
+                foreach my $test ($IPv6_default, $IPv6_single_con,
+                                  $IPv6_lz) {
                     $test -> no_match (
                         $address_zr,
                          reason => "0 unit after contraction",
                     );
                 }
-                foreach my $test ($test_no_max_con, $test_rfc2373) {
+                foreach my $test ($IPv6_no_max_con, $IPv6_rfc2373) {
                     $test -> match (
                         $address_zr,
                         test     => "0 unit after contraction",
@@ -232,14 +201,14 @@ for (my $i = 0; $i <= 7; $i ++) {
                 }
 
 
-                foreach my $test ($test_default, $test_single_con,
-                                  $test_no_max_con) {
+                foreach my $test ($IPv6_default, $IPv6_single_con,
+                                  $IPv6_no_max_con) {
                     $test -> no_match (
                         $address_lzr,
                         reason   => "Leading zero after contraction"
                     );
                 }
-                foreach my $test ($test_leading_zeros, $test_rfc2373) {
+                foreach my $test ($IPv6_lz, $IPv6_rfc2373) {
                     $test -> match (
                         $address_lzr,
                         test     => "Leading zero after contraction",
@@ -248,13 +217,13 @@ for (my $i = 0; $i <= 7; $i ++) {
                 }
 
 
-                foreach my $test ($test_leading_zeros) {
+                foreach my $test ($IPv6_lz) {
                     $test -> no_match (
                         $address_mzr,
                         reason   => "Multiple zeros after contraction",
                     );
                 }
-                foreach my $test ($test_rfc2373) {
+                foreach my $test ($IPv6_rfc2373) {
                     $test -> match (
                         $address_mzr,
                         test     => "Multiple zeros after contraction",
@@ -265,9 +234,9 @@ for (my $i = 0; $i <= 7; $i ++) {
 
 
             if ($r > 1) {
-                foreach my $test ($test_default, $test_no_max_con,
-                                  $test_leading_zeros, $test_single_con,
-                                  $test_rfc2373) {
+                foreach my $test ($IPv6_default, $IPv6_no_max_con,
+                                  $IPv6_lz, $IPv6_single_con,
+                                  $IPv6_rfc2373) {
                     $test -> match (
                         $address_nzr,
                         test     => "Non-flanking zero right of contraction",
