@@ -48,6 +48,9 @@ my %IPv6_unit = (
 );
 
 
+#
+# Pattern for IPv4 addresses. 
+#
 pattern  Net         => 'IPv4',
          -config     => {
             -sep     =>  '\.',
@@ -61,6 +64,9 @@ pattern  Net         => 'IPv4',
          -pattern    => \&octet_constructor,
 ;
 
+#
+# Pattern for MAC addresses.
+#
 pattern  Net         => 'MAC',
          -config     => {
             -sep     =>  ':',
@@ -74,6 +80,9 @@ pattern  Net         => 'MAC',
          -pattern    => \&octet_constructor,
 ;
 
+#
+# Pattern for domains (host names). From RFC 1101 and RFC 1035.
+#
 pattern  Net         => 'domain',
          -config     => {
             -rfc1035     =>  0,
@@ -83,6 +92,9 @@ pattern  Net         => 'domain',
 ;
 
 
+#
+# Pattern for IPv6 addresses. From RFC 2373 and RFC 5952.
+#
 pattern  Net         => 'IPv6',
          -config     => {
             -leading_zeros       =>   0,
