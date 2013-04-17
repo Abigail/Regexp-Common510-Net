@@ -26,6 +26,12 @@ my %octet_unit = (
     bin => q {[0-1]{1,8}},
 );
 
+my %IPv6_unit = (
+    hex => [q {[0-9a-f]{1,4}},    q {0|[1-9a-f]{1,3}}],
+    HeX => [q {[0-9a-fA-F]{1,4}}, q {0|[1-9a-fA-F]{1,3}}],
+    HEX => [q {[0-9A-F]{1,4}},    q {0|[1-9A-F]{1,3}}],
+);
+
 
 pattern  Net         => 'IPv4',
          -config     => {
@@ -64,8 +70,11 @@ pattern  Net         => 'domain',
 
 pattern  Net         => 'IPv6',
          -config     => {
-            -leading_zero   =>  1,
-            -trailing_ipv4  =>  1,
+            -leading_zeros    =>   0,
+            -trailing_ipv4    =>   0,
+            -single_contract  =>   0,
+            -base             =>  'hex',
+            -rfc2373          =>   0,
          },
          -pattern    => \&ipv6_constructor,
 ;
@@ -135,11 +144,72 @@ sub domain_constructor {
 
 
 #
-# IPv6 addresses discussed in RFC 2373
+# IPv6 addresses discussed in RFC 2373 and RFC 5952
+# See also RFC 6052, RFC 4291, RFC 3513.
 #
 sub ipv6_constructor {
-    1;
+    my %args     = @_;
+
+    my $NR_UNITS = 8;
+    my $SEP      = ':';
+
+    my $name     = $args {-Name} [0];
+    my $warn     = $args {-Warn};
+
+    my $base     = $args {-base};
+    my $lz       = $args {-leading_zeros} ? 1 : 0;
+    my $ipv4     = $args {-trailing_ipv4};
+    my $single   = $args {-single_contract};
+
+    if ($args {-rfc2373}) {
+        $base    = 'HeX';
+        $lz      =  1;
+        $ipv4    =  1;
+        $single  =  1;
+    }
+
+    if (!$IPv6_unit {$base}) {
+        warn "Unknown -base '$base', falling back to 'HeX'\n" if $warn;
+        $base = 'HeX';
+    }
+
+    my $unit     = $IPv6_unit {$base} [$lz] or die;  # Should not happen.
+       $unit     = "(?k<unit>:$unit)";
+
+    my @patterns;
+
+    #
+    # It may be that there are no contractions.
+    #
+    push @patterns => join $SEP => ($unit) x $NR_UNITS;
+
+    #
+    # Otherwise, there cannot be more than 6 units.
+    #
+    for (my $l = 0; $l <= 6; $l ++) {
+        #
+        # We prefer to do longest match, so larger $r gets priority
+        #
+        for (my $r = 6 - $l; $r >= 0; $r --) {
+            #
+            # $l is the number of blocks left of the double colon,
+            # $r is the number of blocks left of the double colon,
+            # $m is the number of omitted blocks
+            #
+            my $m    = 8 - $l - $r;
+            my $patl = $l ? ($unit . $SEP) x $l : $SEP;
+            my $patr = $r ? ($SEP . $unit) x $r : $SEP;
+            my $patm = "(?k<unit>:)" x $m;
+            push @patterns => "(?:$patl$patm$patr)";
+        }
+    }
+
+    local $" = "|";
+
+    return "(?|@patterns)";
 }
+
+
 
 1;
 
