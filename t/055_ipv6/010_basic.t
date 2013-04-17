@@ -52,6 +52,12 @@ my $test_lz_HeX  = Test::Regexp:: -> new -> init (
     full_text    => 1,
     name         => "Net IPv6, -leading_zeros => 1, -base => 'HeX'",
 );
+my $test_rfc2373 = Test::Regexp:: -> new -> init (
+    pattern      => RE (Net => 'IPv6', -Keep => 0, -rfc2373 => 1),
+    keep_pattern => RE (Net => 'IPv6', -Keep => 1, -rfc2373 => 1),
+    full_text    => 1,
+    name         => "Net IPv6, -rfc2373 => 1",
+);
 
 
 my @chunks = qw [2001 0 ffff 1 aa abcd e9f];
@@ -69,14 +75,15 @@ foreach my $c (1 .. 20) {
 
     if ($lc_address eq $uc_address) {
         foreach my $test ($test_default, $test_HeX, $test_lz, $test_lz_HeX,
-                          $test_HEX, $test_lz_HEX) {
+                          $test_HEX, $test_lz_HEX, $test_rfc2373) {
             $test -> match ($lc_address,
                             test     => "Basic IPv6",
                             captures => \@lc_captures,);
         }
     }
     else {
-        foreach my $test ($test_default, $test_HeX, $test_lz, $test_lz_HeX) {
+        foreach my $test ($test_default, $test_HeX, $test_lz, $test_lz_HeX,
+                          $test_rfc2373,) {
             $test -> match ($lc_address,
                             test     => "Basic IPv6",
                             captures => \@lc_captures,);
@@ -86,7 +93,8 @@ foreach my $c (1 .. 20) {
                                 reason  => "Lower case a-f",);
         }
 
-        foreach my $test ($test_HEX, $test_lz_HEX, $test_HeX, $test_lz_HeX) {
+        foreach my $test ($test_HEX, $test_lz_HEX, $test_HeX, $test_lz_HeX,
+                          $test_rfc2373,) {
             $test -> match ($uc_address,
                             test     => "Basic IPv6, upper cased",
                             captures => \@uc_captures,);
@@ -108,7 +116,8 @@ foreach my $c (1 .. 20) {
     @uc_captures = ([IPv6 => $uc_address], map {[unit => $_]} @uc_units);
 
     if ($lc_address eq $uc_address) {
-        foreach my $test ($test_lz, $test_lz_HeX, $test_lz_HEX) {
+        foreach my $test ($test_lz, $test_lz_HeX, $test_lz_HEX,
+                          $test_rfc2373,) {
             $test -> match ($lc_address,
                             test     => "Basic IPv6, with leading zeros",
                             captures => \@lc_captures,);
@@ -119,7 +128,7 @@ foreach my $c (1 .. 20) {
         }
     }
     else {
-        foreach my $test ($test_lz, $test_lz_HeX) {
+        foreach my $test ($test_lz, $test_lz_HeX, $test_rfc2373) {
             $test -> match ($lc_address,
                             test     => "Basic IPv6, with leading zeros",
                             captures => \@lc_captures,);
@@ -137,7 +146,7 @@ foreach my $c (1 .. 20) {
                                 reason => "Leading zeros & lower case a-f")
         }
 
-        foreach my $test ($test_lz_HEX, $test_lz_HeX) {
+        foreach my $test ($test_lz_HEX, $test_lz_HeX, $test_rfc2373) {
             $test -> match ($uc_address,
                             test     => "Basic IPv6, with leading zeros, " .
                                         "upper case A-F",

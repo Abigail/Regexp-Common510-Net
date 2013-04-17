@@ -36,6 +36,12 @@ my $test_leading_zeros = Test::Regexp:: -> new -> init (
     full_text       => 1,
     name            => "Net IPv6 -leading_zeros => 1",
 );
+my $test_rfc2373 = Test::Regexp:: -> new -> init (
+    pattern      => RE (Net => 'IPv6', -Keep => 0, -rfc2373 => 1),
+    keep_pattern => RE (Net => 'IPv6', -Keep => 1, -rfc2373 => 1),
+    full_text    => 1,
+    name         => "Net IPv6, -rfc2373 => 1",
+);
 
 
 my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
@@ -112,6 +118,10 @@ for (my $i = 0; $i <= 7; $i ++) {
                             map {[unit => $_]} @left_lz, ("") x $m, @right);
         my @captures_lzr = ([IPv6 => $address_lzr],
                              map {[unit => $_]} @left,   ("") x $m, @right_lz);
+        my @captures_mzl = ([IPv6 => $address_mzl],
+                            map {[unit => $_]} @left_mz, ("") x $m, @right);
+        my @captures_mzr = ([IPv6 => $address_mzr],
+                             map {[unit => $_]} @left,   ("") x $m, @right_mz);
         my @captures_nzl = ([IPv6 => $address_nzl],
                             map {[unit => $_]} @left_nz, ("") x $m, @right);
         my @captures_nzr = ([IPv6 => $address_nzr],
@@ -125,7 +135,7 @@ for (my $i = 0; $i <= 7; $i ++) {
                     reason   => "Contraction of 1 unit"
                 )
             }
-            foreach my $test ($test_single_con) {
+            foreach my $test ($test_single_con, $test_rfc2373) {
                 $test -> match (
                     $address,
                     test     => "Contraction of 1 unit",
@@ -135,7 +145,8 @@ for (my $i = 0; $i <= 7; $i ++) {
         }
         else {
             foreach my $test ($test_default, $test_no_max_con,
-                              $test_single_con, $test_leading_zeros) {
+                              $test_single_con, $test_leading_zeros,
+                              $test_rfc2373) {
                 $test -> match (
                     $address,
                     test     => "Contraction ${l}::${r}",
@@ -151,29 +162,51 @@ for (my $i = 0; $i <= 7; $i ++) {
                          reason => "0 unit before contraction",
                     );
                 }
-                foreach my $test ($test_no_max_con) {
+                foreach my $test ($test_no_max_con, $test_rfc2373) {
                     $test -> match (
                         $address_zl,
                         test     => "0 unit before contraction",
                         captures => \@captures_zl,
                     );
                 }
-                foreach my $test ($test_leading_zeros) {
+
+
+                foreach my $test ($test_default, $test_single_con,
+                                  $test_no_max_con) {
+                    $test -> no_match (
+                        $address_lzl,
+                        reason   => "Leading zero before contraction"
+                    );
+                }
+                foreach my $test ($test_leading_zeros, $test_rfc2373) {
                     $test -> match (
                         $address_lzl,
                         test     => "Leading zero before contraction",
                         captures => \@captures_lzl
                     );
+                }
+
+
+                foreach my $test ($test_leading_zeros) {
                     $test -> no_match (
                         $address_mzl,
                         reason   => "Multiple zeros before contraction",
                     );
                 }
+                foreach my $test ($test_rfc2373) {
+                    $test -> match (
+                        $address_mzl,
+                        test     => "Multiple zeros before contraction",
+                        captures => \@captures_mzl
+                    );
+                }
             }
             
+
             if ($l > 1) {
                 foreach my $test ($test_default, $test_no_max_con,
-                                  $test_leading_zeros, $test_single_con) {
+                                  $test_leading_zeros, $test_single_con,
+                                  $test_rfc2373) {
                     $test -> match (
                         $address_nzl,
                         test     => "Non-flanking zero left of contraction",
@@ -190,29 +223,51 @@ for (my $i = 0; $i <= 7; $i ++) {
                          reason => "0 unit after contraction",
                     );
                 }
-                foreach my $test ($test_no_max_con) {
+                foreach my $test ($test_no_max_con, $test_rfc2373) {
                     $test -> match (
                         $address_zr,
                         test     => "0 unit after contraction",
                         captures => \@captures_zr,
                     );
                 }
-                foreach my $test ($test_leading_zeros) {
+
+
+                foreach my $test ($test_default, $test_single_con,
+                                  $test_no_max_con) {
+                    $test -> no_match (
+                        $address_lzr,
+                        reason   => "Leading zero after contraction"
+                    );
+                }
+                foreach my $test ($test_leading_zeros, $test_rfc2373) {
                     $test -> match (
                         $address_lzr,
                         test     => "Leading zero after contraction",
                         captures => \@captures_lzr
                     );
+                }
+
+
+                foreach my $test ($test_leading_zeros) {
                     $test -> no_match (
                         $address_mzr,
                         reason   => "Multiple zeros after contraction",
                     );
                 }
+                foreach my $test ($test_rfc2373) {
+                    $test -> match (
+                        $address_mzr,
+                        test     => "Multiple zeros after contraction",
+                        captures => \@captures_mzr
+                    );
+                }
             }
+
 
             if ($r > 1) {
                 foreach my $test ($test_default, $test_no_max_con,
-                                  $test_leading_zeros, $test_single_con) {
+                                  $test_leading_zeros, $test_single_con,
+                                  $test_rfc2373) {
                     $test -> match (
                         $address_nzr,
                         test     => "Non-flanking zero right of contraction",

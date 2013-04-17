@@ -36,6 +36,12 @@ my $test_leading_zeros = Test::Regexp:: -> new -> init (
     full_text       => 1,
     name            => "Net IPv6 -leading_zeros => 1",
 );
+my $test_rfc2373 = Test::Regexp:: -> new -> init (
+    pattern      => RE (Net => 'IPv6', -Keep => 0, -rfc2373 => 1),
+    keep_pattern => RE (Net => 'IPv6', -Keep => 1, -rfc2373 => 1),
+    full_text    => 1,
+    name         => "Net IPv6, -rfc2373 => 1",
+);
 
 
 my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
@@ -57,7 +63,8 @@ for (my $i = 0; $i <= 6; $i ++) {
                     my $address = "${i_chunks}::${j_chunks}::${k_chunks}";
                     next if $seen {$address} ++;
                     foreach my $test ($test_default, $test_no_max_con, 
-                                      $test_single_con, $test_leading_zeros) {
+                                      $test_single_con, $test_leading_zeros,
+                                      $test_rfc2373) {
                         $test -> no_match (
                             $address,
                             reason => "Multiple contractions"
