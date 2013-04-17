@@ -206,7 +206,7 @@ sub ipv6_constructor {
 
     local $" = "|";
 
-    return "(?|@patterns)";
+    return "(?k<IPv6>:(?|@patterns))";
 }
 
 
