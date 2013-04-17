@@ -27,9 +27,17 @@ my %octet_unit = (
 );
 
 my %IPv6_unit = (
-    hex => [q {[0-9a-f]{1,4}},    q {0|[1-9a-f]{1,3}}],
-    HeX => [q {[0-9a-fA-F]{1,4}}, q {0|[1-9a-fA-F]{1,3}}],
-    HEX => [q {[0-9A-F]{1,4}},    q {0|[1-9A-F]{1,3}}],
+    hex => [q {0|[1-9a-f][0-9a-f]{0,3}},        # Leading zero not allowed
+            q {[0-9a-f]{1,4}},                  # Leading zero allowed
+            q {[1-9a-f][0-9a-f]{0,3}}],         # Zero not allowed
+
+    HeX => [q {0|[1-9a-fA-F][0-9a-fA-F]{0,3},   # Leading zero not allowed
+            q {[0-9a-fA-F]{1,4}}},              # Leading zero allowed
+            q {[1-9a-fA-F][0-9a-fA-F]{0,3}}],   # Zero not allowed
+
+    HEX => [q {0|[1-9A-F][0-9A-F]{0,3}},        # Leading zero not allowed
+            q {[0-9A-F]{1,4}},                  # Leading zero allowed
+            q {[1-9A-F][0-9A-F]{0,3}}],         # Zero not allowed
 );
 
 
