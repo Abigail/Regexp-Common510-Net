@@ -45,6 +45,7 @@ my @mz     = qw [00 000 0000];
 for (my $i = 0; $i <= 7; $i ++) {
     state $c_lz = 0;
     state $c_mz = 0;
+    state $c_nz = 0;
     my @left    = @chunks [0 .. $i - 1];
     my $left    =  join ":" => @left;
     my @left_z  = @left; $left_z  [-1] = 0 if @left_z;
@@ -53,12 +54,16 @@ for (my $i = 0; $i <= 7; $i ++) {
     my $left_lz =  join ":" => @left_lz;
     my @left_mz = @left; $left_mz [-1] = $mz [$c_mz ++ % @mz] if @left_mz;
     my $left_mz =  join ":" => @left_mz;
+    my @left_nz = @left; $left_nz [$c_nz ++ % (@left_nz - 1)] = 0
+                                                              if @left_nz > 1;
+    my $left_nz =  join ":" => @left_nz;
     my $l       = @left;
     for (my $j = $i + 1; $j <= 8; $j ++) {
         #
         # _z   Zero
         # _lz  Leading zero(s)
         # _mz  Multiple zeros
+        # _nz  Non-flanking zero
         # _zl  Zero on left
         # _zr  Zero on right
         # _lzl Leading zero(s) on left
@@ -76,6 +81,10 @@ for (my $i = 0; $i <= 7; $i ++) {
         my @right_mz     = @right; $right_mz [0] = $mz [$c_mz ++ % @mz]
                                                      if @right_mz;
         my $right_mz     =  join ":" => @right_mz;
+        my @right_nz     = @right;
+                           $right_nz [1 + $c_nz ++ % (@right_nz - 1)] = 0
+                                                     if @right_nz > 1;
+        my $right_nz     =  join ":" => @right_nz;
 
         my $address      = "${left}::${right}";
         my $address_zl   = "${left_z}::${right}";
@@ -84,6 +93,8 @@ for (my $i = 0; $i <= 7; $i ++) {
         my $address_lzr  = "${left}::${right_lz}";
         my $address_mzl  = "${left_mz}::${right}";
         my $address_mzr  = "${left}::${right_mz}";
+        my $address_nzl  = "${left_nz}::${right}";
+        my $address_nzr  = "${left}::${right_nz}";
         my $r            = @right;
 
         my $m            = 8 - $l - $r;
@@ -98,6 +109,10 @@ for (my $i = 0; $i <= 7; $i ++) {
                             map {[unit => $_]} @left_lz, ("") x $m, @right);
         my @captures_lzr = ([IPv6 => $address_lzr],
                              map {[unit => $_]} @left,   ("") x $m, @right_lz);
+        my @captures_nzl = ([IPv6 => $address_nzl],
+                            map {[unit => $_]} @left_nz, ("") x $m, @right);
+        my @captures_nzr = ([IPv6 => $address_nzr],
+                             map {[unit => $_]} @left,   ("") x $m, @right_nz);
 
         if ($m == 1) {
             foreach my $test ($test_default, $test_no_max_con,
@@ -152,6 +167,17 @@ for (my $i = 0; $i <= 7; $i ++) {
                     );
                 }
             }
+            
+            if ($l > 1) {
+                foreach my $test ($test_default, $test_no_max_con,
+                                  $test_leading_zeros, $test_single_con) {
+                    $test -> match (
+                        $address_nzl,
+                        test     => "Non-flanking zero left of contraction",
+                        captures => \@captures_nzl,
+                    )
+                }
+            }
 
             if ($r) {
                 foreach my $test ($test_default, $test_single_con,
@@ -178,6 +204,17 @@ for (my $i = 0; $i <= 7; $i ++) {
                         $address_mzr,
                         reason   => "Multiple zeros after contraction",
                     );
+                }
+            }
+
+            if ($r > 1) {
+                foreach my $test ($test_default, $test_no_max_con,
+                                  $test_leading_zeros, $test_single_con) {
+                    $test -> match (
+                        $address_nzr,
+                        test     => "Non-flanking zero right of contraction",
+                        captures => \@captures_nzr,
+                    )
                 }
             }
         }
