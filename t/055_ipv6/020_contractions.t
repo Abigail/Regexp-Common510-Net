@@ -30,8 +30,13 @@ my $test_single_con = Test::Regexp:: -> new -> init (
     full_text       => 1,
     name            => "Net IPv6 -single_contraction => 1",
 );
+my $test_leading_zeros = Test::Regexp:: -> new -> init (
+    pattern         => RE (Net => 'IPv6', -Keep => 0, -leading_zeros => 1),
+    keep_pattern    => RE (Net => 'IPv6', -Keep => 1, -leading_zeros => 1),
+    full_text       => 1,
+    name            => "Net IPv6 -single_contraction => 1",
+);
 
-my @tests = ($test_default, $test_no_max_con, $test_single_con);
 
 my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
 
@@ -62,7 +67,8 @@ for (my $i = 0; $i <= 7; $i ++) {
                             map {[unit => $_]} @left,   ("") x $m, @right_z);
 
         if ($m == 1) {
-            foreach my $test ($test_default, $test_no_max_con) {
+            foreach my $test ($test_default, $test_no_max_con,
+                              $test_leading_zeros) {
                 $test -> no_match (
                     $address,
                     reason   => "Contraction of 1 unit"
@@ -78,7 +84,7 @@ for (my $i = 0; $i <= 7; $i ++) {
         }
         else {
             foreach my $test ($test_default, $test_no_max_con,
-                              $test_single_con) {
+                              $test_single_con, $test_leading_zeros) {
                 $test -> match (
                     $address,
                     test     => "Contraction ${l}::${r}",
@@ -87,7 +93,8 @@ for (my $i = 0; $i <= 7; $i ++) {
             }
 
             if ($l) {
-                foreach my $test ($test_default, $test_single_con) {
+                foreach my $test ($test_default, $test_single_con,
+                                  $test_leading_zeros) {
                     $test -> no_match (
                         $address_lz,
                          reason => "0 unit before contraction",
@@ -103,7 +110,8 @@ for (my $i = 0; $i <= 7; $i ++) {
             }
 
             if ($r) {
-                foreach my $test ($test_default, $test_single_con) {
+                foreach my $test ($test_default, $test_single_con,
+                                  $test_leading_zeros) {
                     $test -> no_match (
                         $address_rz,
                          reason => "0 unit after contraction",
