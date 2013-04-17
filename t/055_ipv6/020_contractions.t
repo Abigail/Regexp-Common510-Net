@@ -224,6 +224,33 @@ for (my $i = 0; $i <= 7; $i ++) {
     }
 }
 
+#
+# Tests that something really is contracted
+#
+for (my $i = 1; $i < 8; $i ++) {
+    my @copy = @chunks;
+    splice @copy, $i, 0, "";
+    my $address = join ":" => @copy;
+    foreach my $test ($test_default, $test_no_max_con, 
+                      $test_single_con, $test_leading_zeros) {
+        $test -> no_match (
+            $address,
+            reason => "Contracting 0 units"
+        )
+    }
+}
+{
+    my $address = join ":" => @chunks;
+    foreach my $test ($test_default, $test_no_max_con, 
+                      $test_single_con, $test_leading_zeros) {
+        foreach my $address ("::$address", "${address}::") {
+            $test -> no_match (
+                $address,
+                reason => "Contracting 0 units"
+            )
+        }
+    }
+}
 
 Test::NoWarnings::had_no_warnings () if $r;
 
