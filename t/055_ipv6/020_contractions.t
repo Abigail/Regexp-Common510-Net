@@ -34,44 +34,56 @@ my $test_leading_zeros = Test::Regexp:: -> new -> init (
     pattern         => RE (Net => 'IPv6', -Keep => 0, -leading_zeros => 1),
     keep_pattern    => RE (Net => 'IPv6', -Keep => 1, -leading_zeros => 1),
     full_text       => 1,
-    name            => "Net IPv6 -single_contraction => 1",
+    name            => "Net IPv6 -leading_zeros => 1",
 );
 
 
 my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
 my @lz     = qw [0fff 0ed 0b 00a9 008 0007];
+my @mz     = qw [00 000 0000];
 
 for (my $i = 0; $i <= 7; $i ++) {
-    state $c    = 0;
+    state $c_lz = 0;
+    state $c_mz = 0;
     my @left    = @chunks [0 .. $i - 1];
     my $left    =  join ":" => @left;
     my @left_z  = @left; $left_z  [-1] = 0 if @left_z;
     my $left_z  =  join ":" => @left_z;
-    my @left_lz = @left; $left_lz [-1] = $lz [$c ++ % @lz] if @left_lz;
+    my @left_lz = @left; $left_lz [-1] = $lz [$c_lz ++ % @lz] if @left_lz;
     my $left_lz =  join ":" => @left_lz;
+    my @left_mz = @left; $left_mz [-1] = $mz [$c_mz ++ % @mz] if @left_mz;
+    my $left_mz =  join ":" => @left_mz;
     my $l       = @left;
     for (my $j = $i + 1; $j <= 8; $j ++) {
         #
         # _z   Zero
-        # _lz  Leading zero
+        # _lz  Leading zero(s)
+        # _mz  Multiple zeros
         # _zl  Zero on left
         # _zr  Zero on right
-        # _lzl Leading zero on left
-        # _lzr Leading zero on right
+        # _lzl Leading zero(s) on left
+        # _lzr Leading zero(s) on right
+        # _mzl Multiple zeros on left
+        # _mzr Multiple zeros on right
         #
         my @right        = @chunks [$j .. 7];
         my $right        =  join ":" => @right;
         my @right_z      = @right; $right_z  [0] = 0 if @right_z;
         my $right_z      =  join ":" => @right_z;
-        my @right_lz     = @right; $right_lz [0] = $lz [$c ++ % @lz]
+        my @right_lz     = @right; $right_lz [0] = $lz [$c_lz ++ % @lz]
                                                      if @right_lz;
         my $right_lz     =  join ":" => @right_lz;
+        my @right_mz     = @right; $right_mz [0] = $mz [$c_mz ++ % @mz]
+                                                     if @right_mz;
+        my $right_mz     =  join ":" => @right_mz;
 
         my $address      = "${left}::${right}";
         my $address_zl   = "${left_z}::${right}";
         my $address_zr   = "${left}::${right_z}";
         my $address_lzl  = "${left_lz}::${right}";
         my $address_lzr  = "${left}::${right_lz}";
+        my $address_mzl  = "${left_mz}::${right}";
+        my $address_mzr  = "${left}::${right_mz}";
         my $r            = @right;
 
         my $m            = 8 - $l - $r;
@@ -134,6 +146,10 @@ for (my $i = 0; $i <= 7; $i ++) {
                         test     => "Leading zero before contraction",
                         captures => \@captures_lzl
                     );
+                    $test -> no_match (
+                        $address_mzl,
+                        reason   => "Multiple zeros before contraction",
+                    );
                 }
             }
 
@@ -157,6 +173,10 @@ for (my $i = 0; $i <= 7; $i ++) {
                         $address_lzr,
                         test     => "Leading zero after contraction",
                         captures => \@captures_lzr
+                    );
+                    $test -> no_match (
+                        $address_mzr,
+                        reason   => "Multiple zeros after contraction",
                     );
                 }
             }
