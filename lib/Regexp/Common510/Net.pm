@@ -196,14 +196,15 @@ sub ipv6_constructor {
     #
     push @patterns => join $SEP => ($unit) x $NR_UNITS;
 
+    my $max_seq_length = $single_contraction ? 7 : 6;
     #
     # Otherwise, there cannot be more than 6 units.
     #
-    for (my $l = 0; $l <= 6; $l ++) {
+    for (my $l = 0; $l <= $max_seq_length; $l ++) {
         #
         # We prefer to do longest match, so larger $r gets priority
         #
-        for (my $r = 6 - $l; $r >= 0; $r --) {
+        for (my $r = $max_seq_length - $l; $r >= 0; $r --) {
             #
             # $l is the number of blocks left of the double colon,
             # $r is the number of blocks left of the double colon,
