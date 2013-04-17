@@ -17,6 +17,7 @@ t/050_ipv4/840_garbage.t
 t/055_ipv6/001_first.t
 t/055_ipv6/010_basic.t
 t/055_ipv6/020_contractions.t
+t/055_ipv6/021_contractions.t
 t/055_ipv6/022_multiple_contractions.t
 t/060_mac/001_first.t
 t/060_mac/010_basic.t
