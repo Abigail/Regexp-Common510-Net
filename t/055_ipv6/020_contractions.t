@@ -42,6 +42,9 @@ my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
 my @lz     = qw [0fff 0ed 0b 00a9 008 0007];
 my @mz     = qw [00 000 0000];
 
+#
+# '::' is one of the addresses constructed...
+#
 for (my $i = 0; $i <= 7; $i ++) {
     state $c_lz = 0;
     state $c_mz = 0;
