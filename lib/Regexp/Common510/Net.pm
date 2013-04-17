@@ -37,7 +37,7 @@ pattern  Net         => 'IPv4',
             -fallback_base => 'dec',
             -fallback_sep  => '\.',
          ],
-         -pattern    => \&constructor,
+         -pattern    => \&octet_constructor,
 ;
 
 pattern  Net         => 'MAC',
@@ -50,7 +50,7 @@ pattern  Net         => 'MAC',
             -fallback_base => 'HeX',
             -fallback_sep  => ':',
          ],
-         -pattern    => \&constructor,
+         -pattern    => \&octet_constructor,
 ;
 
 pattern  Net         => 'domain',
@@ -72,7 +72,7 @@ pattern  Net         => 'IPv6',
 
 
 
-sub constructor {
+sub octet_constructor {
     my %args    = @_;
 
     my $name    = $args {-Name} [0];
