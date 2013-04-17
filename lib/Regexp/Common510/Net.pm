@@ -27,17 +27,24 @@ my %octet_unit = (
 );
 
 my %IPv6_unit = (
-    hex => [q {0|[1-9a-f][0-9a-f]{0,3}},        # Leading zero not allowed
-            q {[0-9a-f]{1,4}},                  # Leading zero allowed
-            q {[1-9a-f][0-9a-f]{0,3}}],         # Zero not allowed
+    hex => [q {0|[1-9a-f][0-9a-f]{0,3}},          # Leading zero not allowed
+            q {[0-9a-f]{1,4}},                    # Leading zero allowed
+            q {[1-9a-f][0-9a-f]{0,3}},            # Zero not allowed
+            q {[1-9a-f][0-9a-f]{0,3}|0[1-9a-f][0-9a-f]{0,2}|} .
+            q {00[1-9a-f][0-9a-f]?|000[1-9a-f]}], # 0 not allowed, but may lead
 
-    HeX => [q {0|[1-9a-fA-F][0-9a-fA-F]{0,3},   # Leading zero not allowed
-            q {[0-9a-fA-F]{1,4}}},              # Leading zero allowed
-            q {[1-9a-fA-F][0-9a-fA-F]{0,3}}],   # Zero not allowed
+    HeX => [q {0|[1-9a-fA-F][0-9a-fA-F]{0,3},     # Leading zero not allowed
+            q {[0-9a-fA-F]{1,4}}},                # Leading zero allowed
+            q {[1-9a-fA-F][0-9a-fA-F]{0,3}},      # Zero not allowed
+            q {[1-9a-fA-F][0-9a-fA-F]{0,3}|0[1-9a-fA-F][0-9a-fA-F]{0,2}|} .
+            q {00[1-9a-fA-F][0-9a-fA-F]?|000[1-9a-fA-F]}],
+                                                  # 0 not allowed, but may lead
 
-    HEX => [q {0|[1-9A-F][0-9A-F]{0,3}},        # Leading zero not allowed
-            q {[0-9A-F]{1,4}},                  # Leading zero allowed
-            q {[1-9A-F][0-9A-F]{0,3}}],         # Zero not allowed
+    HEX => [q {0|[1-9A-F][0-9A-F]{0,3}},          # Leading zero not allowed
+            q {[0-9A-F]{1,4}},                    # Leading zero allowed
+            q {[1-9A-F][0-9A-F]{0,3}},            # Zero not allowed
+            q {[1-9A-F][0-9A-F]{0,3}|0[1-9A-F][0-9A-F]{0,2}|} .
+            q {00[1-9A-F][0-9A-F]?|000[1-9A-F]}], # 0 not allowed, but may lead
 );
 
 
@@ -184,9 +191,9 @@ sub ipv6_constructor {
         $base = 'HeX';
     }
 
-    my $unit     = $IPv6_unit {$base} [$lz] or die;  # Should not happen.
+    my $unit     = $IPv6_unit {$base} [$lz]     or die;  # Should not happen.
        $unit     = "(?k<unit>:$unit)";
-    my $nz_unit  = $IPv6_unit {$base} [2]   or die;  # Should not happen.
+    my $nz_unit  = $IPv6_unit {$base} [2 + $lz] or die;  # Should not happen.
        $nz_unit  = "(?k<unit>:$nz_unit)";
 
     my @patterns;
