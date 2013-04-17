@@ -33,8 +33,8 @@ my %IPv6_unit = (
             q {[1-9a-f][0-9a-f]{0,3}|0[1-9a-f][0-9a-f]{0,2}|} .
             q {00[1-9a-f][0-9a-f]?|000[1-9a-f]}], # 0 not allowed, but may lead
 
-    HeX => [q {0|[1-9a-fA-F][0-9a-fA-F]{0,3},     # Leading zero not allowed
-            q {[0-9a-fA-F]{1,4}}},                # Leading zero allowed
+    HeX => [q {0|[1-9a-fA-F][0-9a-fA-F]{0,3}},    # Leading zero not allowed
+            q {[0-9a-fA-F]{1,4}},                 # Leading zero allowed
             q {[1-9a-fA-F][0-9a-fA-F]{0,3}},      # Zero not allowed
             q {[1-9a-fA-F][0-9a-fA-F]{0,3}|0[1-9a-fA-F][0-9a-fA-F]{0,2}|} .
             q {00[1-9a-fA-F][0-9a-fA-F]?|000[1-9a-fA-F]}],
