@@ -78,11 +78,12 @@ pattern  Net         => 'domain',
 
 pattern  Net         => 'IPv6',
          -config     => {
-            -leading_zeros    =>   0,
-            -trailing_ipv4    =>   0,
-            -single_contract  =>   0,
-            -base             =>  'hex',
-            -rfc2373          =>   0,
+            -leading_zeros       =>   0,
+            -trailing_ipv4       =>   0,
+            -single_contraction  =>   0,
+            -max_contraction     =>   1,
+            -base                =>  'hex',
+            -rfc2373             =>   0,
          },
          -pattern    => \&ipv6_constructor,
 ;
@@ -156,24 +157,26 @@ sub domain_constructor {
 # See also RFC 6052, RFC 4291, RFC 3513.
 #
 sub ipv6_constructor {
-    my %args     = @_;
+    my %args               =  @_;
 
-    my $NR_UNITS = 8;
-    my $SEP      = ':';
+    my $NR_UNITS           =  8;
+    my $SEP                = ':';
 
-    my $name     = $args {-Name} [0];
-    my $warn     = $args {-Warn};
+    my $name               = $args {-Name} [0];
+    my $warn               = $args {-Warn};
 
-    my $base     = $args {-base};
-    my $lz       = $args {-leading_zeros} ? 1 : 0;
-    my $ipv4     = $args {-trailing_ipv4};
-    my $single   = $args {-single_contract};
+    my $base               = $args {-base};
+    my $lz                 = $args {-leading_zeros} ? 1 : 0;
+    my $ipv4               = $args {-trailing_ipv4};
+    my $single_contraction = $args {-single_contraction};
+    my $max_contraction    = $args {-max_contraction};
 
     if ($args {-rfc2373}) {
-        $base    = 'HeX';
-        $lz      =  1;
-        $ipv4    =  1;
-        $single  =  1;
+        $base               = 'HeX';
+        $lz                 =  1;
+        $ipv4               =  1;
+        $single_contraction =  1;
+        $max_contraction    =  0;
     }
 
     if (!$IPv6_unit {$base}) {
@@ -183,6 +186,8 @@ sub ipv6_constructor {
 
     my $unit     = $IPv6_unit {$base} [$lz] or die;  # Should not happen.
        $unit     = "(?k<unit>:$unit)";
+    my $nz_unit  = $IPv6_unit {$base} [2]   or die;  # Should not happen.
+       $nz_unit  = "(?k<unit>:$nz_unit)";
 
     my @patterns;
 
@@ -205,10 +210,37 @@ sub ipv6_constructor {
             # $m is the number of omitted blocks
             #
             my $m    = 8 - $l - $r;
-            my $patl = $l ? ($unit . $SEP) x $l : $SEP;
-            my $patr = $r ? ($SEP . $unit) x $r : $SEP;
+
+            my $patl;
+            if ($l == 0) {
+                $patl = "";
+            }
+            elsif ($max_contraction) {
+                #
+                # We will have $l - 1 times a unit, followed by a non-zero one
+                #
+                $patl = join $SEP => ($unit) x ($l - 1), $nz_unit;
+            }
+            else {
+                $patl = join $SEP => ($unit) x  $l;
+            }
+
+            my $patr;
+            if ($r == 0) {
+                $patr = "";
+            }
+            elsif ($max_contraction) {
+                #
+                # We will have $r - 1 times a unit, preceeded by a non-zero one
+                #
+                $patr = join $SEP => $nz_unit, (($unit) x ($r - 1));
+            }
+            else {
+                $patr = join $SEP => ($unit) x  $r;
+            }
+
             my $patm = "(?k<unit>:)" x $m;
-            push @patterns => "(?:$patl$patm$patr)";
+            push @patterns => "(?:$patl$SEP$patm$SEP$patr)";
         }
     }
 
