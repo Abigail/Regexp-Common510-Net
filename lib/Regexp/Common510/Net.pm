@@ -230,7 +230,7 @@ sub ipv6_constructor {
         push @patterns => join $SEP => ($unit) x $NR_UNITS;
     }
 
-    my $max_seq_length = $single_contraction ? 7 : 6;
+    my $max_seq_length = $single_contraction ? $NR_UNITS - 1 : $NR_UNITS - 2;
     #
     # Otherwise, there cannot be more than 6 units.
     #
@@ -244,7 +244,7 @@ sub ipv6_constructor {
             # $r is the number of blocks left of the double colon,
             # $m is the number of omitted blocks
             #
-            my $m    = 8 - $l - $r;
+            my $m    = $NR_UNITS - $l - $r;
 
             my $patl;
             if ($l == 0) {
