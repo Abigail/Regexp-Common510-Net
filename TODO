@@ -5,14 +5,21 @@
 
 - IPv6
      - Create pattern
+         - Implement the trailing IPv4 address option
      - Document pattern
      - Tests
+         - Trailing IPv4 address
+         - Fail: 
+             - Not enough units
+             - Too many units
+             - Units too large
+             - Units with incorrect base
+             - Incorrect separator
+             - Garbage
 
 - Mac addresses:
 
 - Domain names:
-     - Document pattern
-
      - RFC 1035 and 2181 mention the domain name is limited
        to 255 characters. Currently, the pattern does not check
        for this. (But there is a TODO test).
