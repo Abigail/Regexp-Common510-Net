@@ -12,7 +12,7 @@ our @ISA    = qw [Exporter];
 our @EXPORT = qw [$IPv6_default $IPv6_HEX $IPv6_HeX
                   $IPv6_lz $IPv6_lz_HEX $IPv6_lz_HeX
                   $IPv6_no_max_con $IPv6_single_con
-                  $IPv6_rfc2373];
+                  $IPv6_rfc2373 @IPv6];
 
 
 our $IPv6_default       =   Test::Regexp:: -> new -> init (
@@ -26,13 +26,13 @@ our $IPv6_HEX           =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep => 0, -base => 'HEX'),
      keep_pattern       =>  RE (Net => 'IPv6', -Keep => 1, -base => 'HEX'),
      full_text          =>  1,
-     name               => "Net IPv6, -base => 'HEX'",
+     name               => "Net IPv6 -base => 'HEX'",
 );
 our $IPv6_HeX           =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep => 0, -base => 'HeX'),
      keep_pattern       =>  RE (Net => 'IPv6', -Keep => 1, -base => 'HeX'),
      full_text          =>  1,
-     name               => "Net IPv6, -base => 'HeX'",
+     name               => "Net IPv6 -base => 'HeX'",
 );
 our $IPv6_lz            =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep          => 0,
@@ -40,7 +40,7 @@ our $IPv6_lz            =   Test::Regexp:: -> new -> init (
      keep_pattern       =>  RE (Net => 'IPv6', -Keep          => 1,
                                                -leading_zeros => 1),
      full_text          =>  1,
-     name               => "Net IPv6, -leading_zeros => 1",
+     name               => "Net IPv6 -leading_zeros => 1",
 );
 our $IPv6_lz_HEX        =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep          =>  0,
@@ -50,7 +50,7 @@ our $IPv6_lz_HEX        =   Test::Regexp:: -> new -> init (
                                                -leading_zeros =>  1,
                                                -base          => 'HEX'),
      full_text          =>  1,
-     name               => "Net IPv6, -leading_zeros => 1, -base => 'HEX'",
+     name               => "Net IPv6 -leading_zeros => 1, -base => 'HEX'",
 );
 our $IPv6_lz_HeX        =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep          =>  0,
@@ -60,7 +60,7 @@ our $IPv6_lz_HeX        =   Test::Regexp:: -> new -> init (
                                                -leading_zeros =>  1,
                                                -base          => 'HeX'),
      full_text          =>  1,
-     name               => "Net IPv6, -leading_zeros => 1, -base => 'HeX'",
+     name               => "Net IPv6 -leading_zeros => 1, -base => 'HeX'",
 );  
 
 our $IPv6_no_max_con    =   Test::Regexp:: -> new -> init (
@@ -92,3 +92,5 @@ our $IPv6_rfc2373       =   Test::Regexp:: -> new -> init (
      name               => "Net IPv6 -rfc2373 => 1",
 );
 
+our @IPv6 = ($IPv6_default, $IPv6_HEX, $IPv6_HeX, $IPv6_lz, $IPv6_lz_HEX,
+             $IPv6_lz_HeX, $IPv6_no_max_con, $IPv6_single_con, $IPv6_rfc2373);
