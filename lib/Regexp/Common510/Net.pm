@@ -9,6 +9,7 @@ our $VERSION = '2013041001';
 
 use Regexp::Common510;
 
+my $sequence_constructor;
 
 my %octet_map  = (
     16      => 'HeX',
@@ -203,17 +204,31 @@ sub ipv6_constructor {
         $base = 'HeX';
     }
 
-    my $unit     = $IPv6_unit {$base} [$lz]     or die;  # Should not happen.
-       $unit     = "(?k<unit>:$unit)";
-    my $nz_unit  = $IPv6_unit {$base} [2 + $lz] or die;  # Should not happen.
-       $nz_unit  = "(?k<unit>:$nz_unit)";
+    my $unit           = $IPv6_unit {$base} [$lz]     or die;
+       $unit           = "(?k<unit>:$unit)";
+    my $non_zero_unit  = $IPv6_unit {$base} [2 + $lz] or die;
+       $non_zero_unit  = "(?k<unit>:$non_zero_unit)";
+    my $zero_unit      = $lz ? "0{1,4}" : 0;
+       $zero_unit      = "(?k<unit>:$zero_unit)";
 
     my @patterns;
 
     #
     # It may be that there are no contractions.
     #
-    push @patterns => join $SEP => ($unit) x $NR_UNITS;
+    if ($max_contraction) {
+        push @patterns => $sequence_constructor -> (
+            non_zero_unit       => $non_zero_unit,
+            zero_unit           => $zero_unit,
+            length              => $NR_UNITS,
+            max_zeros           =>  1,
+            may_end_with_zero   =>  1,
+            may_start_with_zero =>  1,
+        );
+    }
+    else {
+        push @patterns => join $SEP => ($unit) x $NR_UNITS;
+    }
 
     my $max_seq_length = $single_contraction ? 7 : 6;
     #
@@ -237,9 +252,18 @@ sub ipv6_constructor {
             }
             elsif ($max_contraction) {
                 #
-                # We will have $l - 1 times a unit, followed by a non-zero one
+                # We cannot have as many (or more) zero units in succession
+                # as there are contracted units. Nor can there be a zero
+                # unit just before the contraction.
                 #
-                $patl = join $SEP => ($unit) x ($l - 1), $nz_unit;
+                $patl = $sequence_constructor -> (
+                    non_zero_unit         =>  $non_zero_unit,
+                    zero_unit             =>  $zero_unit,
+                    length                =>  $l,
+                    max_zeros             =>  $m - 1,
+                    may_start_with_zero   =>   1,
+                    may_end_with_zero     =>   0,
+                );
             }
             else {
                 $patl = join $SEP => ($unit) x  $l;
@@ -251,9 +275,18 @@ sub ipv6_constructor {
             }
             elsif ($max_contraction) {
                 #
-                # We will have $r - 1 times a unit, preceeded by a non-zero one
+                # We cannot have more zero units in succession as there are
+                # contracted units. Nor can there be a zero unit just after
+                # the contraction.
                 #
-                $patr = join $SEP => $nz_unit, (($unit) x ($r - 1));
+                $patr = $sequence_constructor -> (
+                    non_zero_unit         =>  $non_zero_unit,
+                    zero_unit             =>  $zero_unit,
+                    length                =>  $r,
+                    max_zeros             =>  $m,
+                    may_start_with_zero   =>   0,
+                    may_end_with_zero     =>   1,
+                );
             }
             else {
                 $patr = join $SEP => ($unit) x  $r;
@@ -270,8 +303,48 @@ sub ipv6_constructor {
 }
 
 
+$sequence_constructor = sub {
+    my %args                = @_;
+    my $non_zero_unit       = $args       {non_zero_unit};
+    my $zero_unit           = $args           {zero_unit};
+    my $length              = $args              {length};
+    my $max_zeros           = $args           {max_zeros};
+    my $may_end_with_zero   = $args   {may_end_with_zero};
+    my $may_start_with_zero = $args {may_start_with_zero};
+
+    #
+    # All possible sequences
+    #
+    my @bits = map {sprintf "%0${length}b" => $_} 0 .. 2 ** $length - 1;
+
+    #
+    # Filter
+    #
+    my $filter = "0" x ($max_zeros + 1);
+
+    @bits = grep {!/$filter/} @bits;
+    @bits = grep {!/^0/}      @bits unless $may_start_with_zero;
+    @bits = grep {!/0$/}      @bits unless $may_end_with_zero;
+
+    #
+    # We need a little trick. To make sure we capture a trailing unit
+    # like '0007' correctly, we need to match trailing non-zero units
+    # before trailing zero units.
+    #
+    @bits = map {scalar reverse} sort {$b cmp $a} map {scalar reverse} @bits;
+
+    my @patterns = map {
+        join ":" => map {$_ ? $non_zero_unit : $zero_unit} split // => $_
+    } @bits;
+
+    local $" = "|";
+
+    return "(?|@patterns)";
+};
+
 
 1;
+
 
 __END__
 
