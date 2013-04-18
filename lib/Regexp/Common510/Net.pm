@@ -240,12 +240,16 @@ sub ipv6_constructor {
                 may_end_with_zero   =>  1,
                 may_start_with_zero =>  1,
             );
-            push @patterns => "$pat\.${IPv4}"
+            #
+            # Due to a bug in Perl, we need the trailing, empty-matching
+            # (?<unit>) sub-patterns.
+            #
+            push @patterns => "$pat(?k<unit>:)(?k<unit>:)\\.${IPv4}"
         }
     }
     else {
         push @patterns => join  $SEP => ($unit) x  $NR_UNITS;
-        push @patterns => join ($SEP => ($unit) x ($NR_UNITS)) . ".${IPv4}"
+        push @patterns => join ($SEP => ($unit) x ($NR_UNITS)) . "\\.${IPv4}"
               if $ipv4;
     }
 
