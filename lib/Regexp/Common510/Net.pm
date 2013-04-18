@@ -26,7 +26,31 @@ my %octet_unit = (
     bin => q {[0-1]{1,8}},
 );
 
+my %IPv6_unit = (
+    hex => [q {0|[1-9a-f][0-9a-f]{0,3}},          # Leading zero not allowed
+            q {[0-9a-f]{1,4}},                    # Leading zero allowed
+            q {[1-9a-f][0-9a-f]{0,3}},            # Zero not allowed
+            q {[1-9a-f][0-9a-f]{0,3}|0[1-9a-f][0-9a-f]{0,2}|} .
+            q {00[1-9a-f][0-9a-f]?|000[1-9a-f]}], # 0 not allowed, but may lead
 
+    HeX => [q {0|[1-9a-fA-F][0-9a-fA-F]{0,3}},    # Leading zero not allowed
+            q {[0-9a-fA-F]{1,4}},                 # Leading zero allowed
+            q {[1-9a-fA-F][0-9a-fA-F]{0,3}},      # Zero not allowed
+            q {[1-9a-fA-F][0-9a-fA-F]{0,3}|0[1-9a-fA-F][0-9a-fA-F]{0,2}|} .
+            q {00[1-9a-fA-F][0-9a-fA-F]?|000[1-9a-fA-F]}],
+                                                  # 0 not allowed, but may lead
+
+    HEX => [q {0|[1-9A-F][0-9A-F]{0,3}},          # Leading zero not allowed
+            q {[0-9A-F]{1,4}},                    # Leading zero allowed
+            q {[1-9A-F][0-9A-F]{0,3}},            # Zero not allowed
+            q {[1-9A-F][0-9A-F]{0,3}|0[1-9A-F][0-9A-F]{0,2}|} .
+            q {00[1-9A-F][0-9A-F]?|000[1-9A-F]}], # 0 not allowed, but may lead
+);
+
+
+#
+# Pattern for IPv4 addresses. 
+#
 pattern  Net         => 'IPv4',
          -config     => {
             -sep     =>  '\.',
@@ -37,9 +61,12 @@ pattern  Net         => 'IPv4',
             -fallback_base => 'dec',
             -fallback_sep  => '\.',
          ],
-         -pattern    => \&constructor,
+         -pattern    => \&octet_constructor,
 ;
 
+#
+# Pattern for MAC addresses.
+#
 pattern  Net         => 'MAC',
          -config     => {
             -sep     =>  ':',
@@ -50,9 +77,12 @@ pattern  Net         => 'MAC',
             -fallback_base => 'HeX',
             -fallback_sep  => ':',
          ],
-         -pattern    => \&constructor,
+         -pattern    => \&octet_constructor,
 ;
 
+#
+# Pattern for domains (host names). From RFC 1101 and RFC 1035.
+#
 pattern  Net         => 'domain',
          -config     => {
             -rfc1035     =>  0,
@@ -62,8 +92,24 @@ pattern  Net         => 'domain',
 ;
 
 
+#
+# Pattern for IPv6 addresses. From RFC 2373 and RFC 5952.
+#
+pattern  Net         => 'IPv6',
+         -config     => {
+            -leading_zeros       =>   0,
+            -trailing_ipv4       =>   0,
+            -single_contraction  =>   0,
+            -max_contraction     =>   1,
+            -base                =>  'hex',
+            -rfc2373             =>   0,
+         },
+         -pattern    => \&ipv6_constructor,
+;
 
-sub constructor {
+
+
+sub octet_constructor {
     my %args    = @_;
 
     my $name    = $args {-Name} [0];
@@ -122,6 +168,108 @@ sub domain_constructor {
 
     return "(?k<domain>:$domain)";
 }
+
+
+
+#
+# IPv6 addresses discussed in RFC 2373 and RFC 5952
+# See also RFC 6052, RFC 4291, RFC 3513.
+#
+sub ipv6_constructor {
+    my %args               =  @_;
+
+    my $NR_UNITS           =  8;
+    my $SEP                = ':';
+
+    my $name               = $args {-Name} [0];
+    my $warn               = $args {-Warn};
+
+    my $base               = $args {-base};
+    my $lz                 = $args {-leading_zeros} ? 1 : 0;
+    my $ipv4               = $args {-trailing_ipv4};
+    my $single_contraction = $args {-single_contraction};
+    my $max_contraction    = $args {-max_contraction};
+
+    if ($args {-rfc2373}) {
+        $base               = 'HeX';
+        $lz                 =  1;
+        $ipv4               =  1;
+        $single_contraction =  1;
+        $max_contraction    =  0;
+    }
+
+    if (!$IPv6_unit {$base}) {
+        warn "Unknown -base '$base', falling back to 'HeX'\n" if $warn;
+        $base = 'HeX';
+    }
+
+    my $unit     = $IPv6_unit {$base} [$lz]     or die;  # Should not happen.
+       $unit     = "(?k<unit>:$unit)";
+    my $nz_unit  = $IPv6_unit {$base} [2 + $lz] or die;  # Should not happen.
+       $nz_unit  = "(?k<unit>:$nz_unit)";
+
+    my @patterns;
+
+    #
+    # It may be that there are no contractions.
+    #
+    push @patterns => join $SEP => ($unit) x $NR_UNITS;
+
+    my $max_seq_length = $single_contraction ? 7 : 6;
+    #
+    # Otherwise, there cannot be more than 6 units.
+    #
+    for (my $l = 0; $l <= $max_seq_length; $l ++) {
+        #
+        # We prefer to do longest match, so larger $r gets priority
+        #
+        for (my $r = $max_seq_length - $l; $r >= 0; $r --) {
+            #
+            # $l is the number of blocks left of the double colon,
+            # $r is the number of blocks left of the double colon,
+            # $m is the number of omitted blocks
+            #
+            my $m    = 8 - $l - $r;
+
+            my $patl;
+            if ($l == 0) {
+                $patl = "";
+            }
+            elsif ($max_contraction) {
+                #
+                # We will have $l - 1 times a unit, followed by a non-zero one
+                #
+                $patl = join $SEP => ($unit) x ($l - 1), $nz_unit;
+            }
+            else {
+                $patl = join $SEP => ($unit) x  $l;
+            }
+
+            my $patr;
+            if ($r == 0) {
+                $patr = "";
+            }
+            elsif ($max_contraction) {
+                #
+                # We will have $r - 1 times a unit, preceeded by a non-zero one
+                #
+                $patr = join $SEP => $nz_unit, (($unit) x ($r - 1));
+            }
+            else {
+                $patr = join $SEP => ($unit) x  $r;
+            }
+
+            my $patm = "(?k<unit>:)" x $m;
+            push @patterns => "(?:$patl$SEP$patm$SEP$patr)";
+        }
+    }
+
+    local $" = "|";
+
+    return "(?k<IPv6>:(?|@patterns))";
+}
+
+
 
 1;
 
