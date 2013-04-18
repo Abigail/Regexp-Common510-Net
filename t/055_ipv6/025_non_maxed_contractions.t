@@ -37,7 +37,8 @@ for (my $l = 0; $l <= 6; $l ++) {
                 my @captures = ([IPv6 => $address],
                                 map {[unit => $_]} @copy, ("") x $m, @right);
 
-                foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz) {
+                foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz,
+                                  $IPv6_ipv4) {
                     $test -> no_match (
                         $address,
                         reason => "Contraction is not maximal",
@@ -70,7 +71,8 @@ for (my $l = 0; $l <= 6; $l ++) {
                 my @captures = ([IPv6 => $address],
                                 map {[unit => $_]} @left, ("") x $m, @copy);
 
-                foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz) {
+                foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz,
+                                  $IPv6_ipv4) {
                     $test -> no_match (
                         $address,
                         reason => "Contraction is not maximal",

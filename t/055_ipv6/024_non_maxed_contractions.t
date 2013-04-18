@@ -36,10 +36,10 @@ for (my $l = 0; $l <= 6; $l ++) {
             my @captures = ([IPv6 => $address],
                             map {[unit => $_]} @copy, ("") x $m, @right);
 
-            foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz) {
+            foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz, $IPv6_ipv4) {
                 $test -> no_match (
                     $address,
-                    reason => "Contraction is not left most (\$m = $m)",
+                    reason => "Contraction is not left most",
                 )
             }
             foreach my $test ($IPv6_no_max_con, $IPv6_rfc2373) {
@@ -66,7 +66,7 @@ for (my $l = 0; $l <= 6; $l ++) {
                             map {[unit => $_]} @left, ("") x $m, @copy);
 
             foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz,
-                              $IPv6_no_max_con, $IPv6_rfc2373) {
+                              $IPv6_no_max_con, $IPv6_ipv4, $IPv6_rfc2373) {
                 $test -> match (
                     $address,
                     test     => "Squence of zeros of equal length " .

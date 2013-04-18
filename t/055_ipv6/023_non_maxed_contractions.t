@@ -26,7 +26,7 @@ for (my $i = 0; $i < @chunks - 1; $i ++) {
         my @captures = ([IPv6 => $address],
                         map {[unit => $_]} @copy);
 
-        foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz) {
+        foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz, $IPv6_ipv4) {
             $test -> no_match (
                 $address,
                 reason => "Address can be contracted"

@@ -100,7 +100,7 @@ for (my $i = 0; $i <= 7; $i ++) {
 
         if ($m == 1) {
             foreach my $test ($IPv6_default, $IPv6_no_max_con,
-                              $IPv6_lz) {
+                              $IPv6_lz, $IPv6_ipv4) {
                 $test -> no_match (
                     $address,
                     reason   => "Contraction of 1 unit"
@@ -118,7 +118,7 @@ for (my $i = 0; $i <= 7; $i ++) {
         else {
             foreach my $test ($IPv6_default, $IPv6_no_max_con,
                               $IPv6_single_con, $IPv6_lz,
-                              $IPv6_rfc2373) {
+                              $IPv6_ipv4, $IPv6_rfc2373) {
                 $test -> match (
                     $address,
                     test     => "Contraction ${l}::${r}",
@@ -129,7 +129,7 @@ for (my $i = 0; $i <= 7; $i ++) {
 
             if ($l) {
                 foreach my $test ($IPv6_default, $IPv6_single_con,
-                                  $IPv6_lz) {
+                                  $IPv6_lz, $IPv6_ipv4) {
                     $test -> no_match (
                         $address_zl,
                          reason => "0 unit before contraction",
@@ -147,7 +147,7 @@ for (my $i = 0; $i <= 7; $i ++) {
 
 
                 foreach my $test ($IPv6_default, $IPv6_single_con,
-                                  $IPv6_no_max_con) {
+                                  $IPv6_no_max_con, $IPv6_ipv4) {
                     $test -> no_match (
                         $address_lzl,
                         reason   => "Leading zero before contraction"
@@ -183,7 +183,7 @@ for (my $i = 0; $i <= 7; $i ++) {
             if ($l > 1) {
                 foreach my $test ($IPv6_default, $IPv6_no_max_con,
                                   $IPv6_lz, $IPv6_single_con,
-                                  $IPv6_rfc2373) {
+                                  $IPv6_ipv4, $IPv6_rfc2373) {
                     $test -> match (
                         $address_nzl,
                         test     => "Non-flanking zero left of contraction",
@@ -196,7 +196,7 @@ for (my $i = 0; $i <= 7; $i ++) {
 
             if ($r) {
                 foreach my $test ($IPv6_default, $IPv6_single_con,
-                                  $IPv6_lz) {
+                                  $IPv6_lz, $IPv6_ipv4) {
                     $test -> no_match (
                         $address_zr,
                          reason => "0 unit after contraction",
@@ -214,7 +214,7 @@ for (my $i = 0; $i <= 7; $i ++) {
 
 
                 foreach my $test ($IPv6_default, $IPv6_single_con,
-                                  $IPv6_no_max_con) {
+                                  $IPv6_no_max_con, $IPv6_ipv4) {
                     $test -> no_match (
                         $address_lzr,
                         reason   => "Leading zero after contraction"
@@ -250,7 +250,7 @@ for (my $i = 0; $i <= 7; $i ++) {
             if ($r > 1) {
                 foreach my $test ($IPv6_default, $IPv6_no_max_con,
                                   $IPv6_lz, $IPv6_single_con,
-                                  $IPv6_rfc2373) {
+                                  $IPv6_ipv4, $IPv6_rfc2373) {
                     $test -> match (
                         $address_nzr,
                         test     => "Non-flanking zero right of contraction",

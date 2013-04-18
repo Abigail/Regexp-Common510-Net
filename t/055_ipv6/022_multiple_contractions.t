@@ -33,7 +33,7 @@ for (my $i = 0; $i <= 6; $i ++) {
                     next if $seen {$address} ++;
                     foreach my $test ($IPv6_default, $IPv6_no_max_con, 
                                       $IPv6_single_con, $IPv6_lz,
-                                      $IPv6_rfc2373) {
+                                      $IPv6_ipv4, $IPv6_rfc2373) {
                         $test -> no_match (
                             $address,
                             reason => "Multiple contractions"

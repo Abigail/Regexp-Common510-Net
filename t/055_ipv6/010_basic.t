@@ -6,6 +6,8 @@ use strict;
 use warnings;
 no  warnings 'syntax';
 
+$| = 1;
+
 use Test::More 0.88;
 use Test::Regexp 2013041801;
 use t::Patterns;
@@ -34,7 +36,7 @@ foreach my $c (1 .. 20) {
 
     if ($lc_address eq $uc_address) {
         foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz, $IPv6_lz_HeX,
-                          $IPv6_HEX, $IPv6_lz_HEX, $IPv6_rfc2373) {
+                          $IPv6_HEX, $IPv6_lz_HEX, $IPv6_ipv4, $IPv6_rfc2373) {
             $test -> match (
                 $lc_address,
                  test     => "Basic IPv6",
@@ -45,7 +47,7 @@ foreach my $c (1 .. 20) {
     }
     else {
         foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz, $IPv6_lz_HeX,
-                          $IPv6_rfc2373,) {
+                          $IPv6_ipv4, $IPv6_rfc2373,) {
             $test -> match (
                 $lc_address,
                  test     => "Basic IPv6",
@@ -69,7 +71,7 @@ foreach my $c (1 .. 20) {
                                                   : \     @uc_captures,
             );
         }
-        foreach my $test ($IPv6_default, $IPv6_lz) {
+        foreach my $test ($IPv6_default, $IPv6_lz, $IPv6_ipv4) {
             $test -> no_match (
                 $uc_address,
                  reason  => "Upper case A-F",);
@@ -99,7 +101,7 @@ foreach my $c (1 .. 20) {
                                                   : \     @lc_captures,
             );
         }
-        foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_HEX) {
+        foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_HEX, $IPv6_ipv4) {
             $test -> no_match (
                 $lc_address,
                  reason  => "Leading zeros",
@@ -121,7 +123,7 @@ foreach my $c (1 .. 20) {
                  reason => "Lower case a-f",
             );
         }
-        foreach my $test ($IPv6_default, $IPv6_HeX) {
+        foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_ipv4) {
             $test -> no_match (
                 $lc_address,
                  reason => "Leading zeros",
@@ -154,7 +156,7 @@ foreach my $c (1 .. 20) {
                  reason => "Leading zeros",
             );
         }
-        foreach my $test ($IPv6_default) {
+        foreach my $test ($IPv6_default, $IPv6_ipv4) {
             $test -> no_match (
                 $uc_address,
                  reason => "Leading zeros & upper case A-F",
