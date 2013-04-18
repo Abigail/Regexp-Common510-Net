@@ -7,7 +7,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2013041201;
+use Test::Regexp 2013041801;
 use t::Patterns;
 
 our $r = eval "require Test::NoWarnings; 1";
@@ -21,7 +21,7 @@ my @chunks = qw [2001 0 ffff 1 aa abcd e9f 72b1 d13a];
     my $address = join ":" => @chunks;
     foreach my $test (@IPv6) {
         $test -> no_match (
-            $address,
+            $test -> name =~ /HEX/ ? uc $address : $address,
             reason => "Too many units"
         )
     }
@@ -35,7 +35,7 @@ my @chunks = qw [2001 0 ffff 1 aa abcd e9f 72b1 d13a];
         my $address = join ":" => @chunks [0 .. $i];
         foreach my $test (@IPv6) {
             $test -> no_match (
-                $address,
+                $test -> name =~ /HEX/ ? uc $address : $address,
                 reason => "Not enough units"
             );
         }
@@ -65,7 +65,7 @@ for (my $i = 0; $i <= 8; $i ++) {
     my $address = join (":" => @left) . '::' . join (":" => @right);
     foreach my $test (@IPv6) {
         $test -> no_match (
-            $address,
+            $test -> name =~ /HEX/ ? uc $address : $address,
             reason => "Contraction, and still 8 units"
         )
     }
