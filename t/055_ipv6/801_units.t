@@ -44,27 +44,45 @@ my @big_lz = qw [00000 000000 01234 00abc];
     }
 }
 
+#
+# Make contractions, exceed unit length
+#
 for (my $i = 0; $i <= 6; $i ++) {
     for (my $j = 0; $i + $j <= 6; $j ++) {
         next unless $i || $j;
         my @left  = @chunks [0 .. $i - 1];
         my @right = @chunks [8 - $j .. 7];
         my @addresses;
+        my @addresses_lz;
         for (my $n = 0; $n < @left; $n ++) {
-            local $left [$n] = $big [$n % @big];
-            push @addresses => join (":" => @left) . "::" .
-                               join (":" => @right);
+            local $left [$n]   = $big [$n % @big];
+            push @addresses    => join (":" => @left) . "::" .
+                                  join (":" => @right);
+            local $left [$n]   = $big_lz [$n % @big];
+            push @addresses_lz => join (":" => @left) . "::" .
+                                  join (":" => @right);
         }
         for (my $n = 0; $n < @right; $n ++) {
-            local $right [$n] = $big [$n % @big];
-            push @addresses => join (":" => @left) . "::" .
-                               join (":" => @right);
+            local $right [$n]  = $big [$n % @big];
+            push @addresses    => join (":" => @left) . "::" .
+                                  join (":" => @right);
+            local $right [$n]  = $big_lz [$n % @big];
+            push @addresses_lz => join (":" => @left) . "::" .
+                                  join (":" => @right);
         }
         foreach my $address (@addresses) {
             foreach my $test (@IPv6) {
                 $test -> no_match (
                     $test -> name =~ /HEX/ ? uc $address : $address,
                     reason => "Unit too large"
+                )
+            }
+        }
+        foreach my $address (@addresses_lz) {
+            foreach my $test ($IPv6_lz, $IPv6_lz_HeX, $IPv6_rfc2373) {
+                $test -> no_match (
+                    $address,
+                    reason => "Too many leading zeros"
                 )
             }
         }
