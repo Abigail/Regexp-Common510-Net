@@ -216,6 +216,8 @@ sub ipv6_constructor {
                                                                -base => 'dec',
                                                                -Keep => 'raw')
                          if $ipv4;
+    my $empty_ipv4     = "(?k<IPv4>:(?k<octet>:)(?k<octet>:)" .
+                                   "(?k<octet>:)(?k<octet>:))";
 
     my @patterns;
 
@@ -223,7 +225,7 @@ sub ipv6_constructor {
     # It may be that there are no contractions.
     #
     if ($max_contraction) {
-        push @patterns => $sequence_constructor -> (
+        my $pat = $sequence_constructor -> (
             non_zero_unit       => $non_zero_unit,
             zero_unit           => $zero_unit,
             length              => $NR_UNITS,
@@ -231,6 +233,8 @@ sub ipv6_constructor {
             may_end_with_zero   =>  1,
             may_start_with_zero =>  1,
         );
+      # $pat .= $empty_ipv4 if $ipv4;
+        push @patterns => $pat;
         if ($ipv4) {
             my $pat = $sequence_constructor -> (
                 non_zero_unit       => $non_zero_unit,
