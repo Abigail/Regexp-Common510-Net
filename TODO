@@ -10,8 +10,6 @@
      - Tests
          - Trailing IPv4 address
          - Fail: 
-             - Not enough units
-             - Too many units
              - Units too large
              - Units with incorrect base
              - Incorrect separator
