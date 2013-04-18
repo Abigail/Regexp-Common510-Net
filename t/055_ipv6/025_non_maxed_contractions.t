@@ -7,14 +7,15 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2013041201;
+use Test::Regexp 2013041801;
 use t::Patterns;
 
 $| = 1;
 
 our $r = eval "require Test::NoWarnings; 1";
 
-my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
+my @chunks        = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
+my @ipv4_captures = ([IPv4 => undef], ([octet => undef]) x 4);
 
 for (my $l = 0; $l <= 6; $l ++) {
     for (my $m = 2; $m <= 4 && $l + $m <= 8; $m ++) {
@@ -46,7 +47,9 @@ for (my $l = 0; $l <= 6; $l ++) {
                     $test -> match (
                         $address,
                         test     => "Contractions do not have to be maximal",
-                        captures => \@captures,
+                        captures => [@captures,
+                                     $test -> tag (-ipv4) ? @ipv4_captures
+                                                          : ()],
                     )
                 }
             }
@@ -77,7 +80,9 @@ for (my $l = 0; $l <= 6; $l ++) {
                     $test -> match (
                         $address,
                         test     => "Contractions do not have to be maximal",
-                        captures => \@captures,
+                        captures => [@captures,
+                                     $test -> tag (-ipv4) ? @ipv4_captures
+                                                          : ()],
                     )
                 }
             }

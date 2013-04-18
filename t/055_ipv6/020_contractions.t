@@ -7,7 +7,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2013041201;
+use Test::Regexp 2013041801;
 use t::Patterns;
 
 our $r = eval "require Test::NoWarnings; 1";
@@ -16,6 +16,8 @@ our $r = eval "require Test::NoWarnings; 1";
 my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
 my @lz     = qw [0fff 0ed 0b 00a9 008 0007];
 my @mz     = qw [00 000 0000];
+
+my @ipv4_captures = ([IPv4 => undef], ([octet => undef]) x 4);
 
 #
 # '::' is one of the addresses constructed...
@@ -108,7 +110,8 @@ for (my $i = 0; $i <= 7; $i ++) {
                 $test -> match (
                     $address,
                     test     => "Contraction of 1 unit",
-                    captures => \@captures,
+                    captures => [@captures,
+                                 $test -> tag (-ipv4) ? @ipv4_captures : ()],
                 )
             }
         }
@@ -119,7 +122,8 @@ for (my $i = 0; $i <= 7; $i ++) {
                 $test -> match (
                     $address,
                     test     => "Contraction ${l}::${r}",
-                    captures => \@captures,
+                    captures => [@captures,
+                                 $test -> tag (-ipv4) ? @ipv4_captures : ()],
                 );
             }
 
@@ -135,7 +139,9 @@ for (my $i = 0; $i <= 7; $i ++) {
                     $test -> match (
                         $address_zl,
                         test     => "0 unit before contraction",
-                        captures => \@captures_zl,
+                        captures => [@captures_zl,
+                                     $test -> tag (-ipv4) ? @ipv4_captures
+                                                          : ()],
                     );
                 }
 
@@ -151,7 +157,9 @@ for (my $i = 0; $i <= 7; $i ++) {
                     $test -> match (
                         $address_lzl,
                         test     => "Leading zero before contraction",
-                        captures => \@captures_lzl
+                        captures => [@captures_lzl,
+                                     $test -> tag (-ipv4) ? @ipv4_captures
+                                                          : ()],
                     );
                 }
 
@@ -166,7 +174,7 @@ for (my $i = 0; $i <= 7; $i ++) {
                     $test -> match (
                         $address_mzl,
                         test     => "Multiple zeros before contraction",
-                        captures => \@captures_mzl
+                        captures => [@captures_mzl, @ipv4_captures],
                     );
                 }
             }
@@ -179,7 +187,9 @@ for (my $i = 0; $i <= 7; $i ++) {
                     $test -> match (
                         $address_nzl,
                         test     => "Non-flanking zero left of contraction",
-                        captures => \@captures_nzl,
+                        captures => [@captures_nzl,
+                                     $test -> tag (-ipv4) ? @ipv4_captures
+                                                          : ()],
                     )
                 }
             }
@@ -196,7 +206,9 @@ for (my $i = 0; $i <= 7; $i ++) {
                     $test -> match (
                         $address_zr,
                         test     => "0 unit after contraction",
-                        captures => \@captures_zr,
+                        captures => [@captures_zr,
+                                     $test -> tag (-ipv4) ? @ipv4_captures
+                                                          : ()],
                     );
                 }
 
@@ -212,7 +224,9 @@ for (my $i = 0; $i <= 7; $i ++) {
                     $test -> match (
                         $address_lzr,
                         test     => "Leading zero after contraction",
-                        captures => \@captures_lzr
+                        captures => [@captures_lzr,
+                                     $test -> tag (-ipv4) ? @ipv4_captures
+                                                          : ()],
                     );
                 }
 
@@ -227,7 +241,7 @@ for (my $i = 0; $i <= 7; $i ++) {
                     $test -> match (
                         $address_mzr,
                         test     => "Multiple zeros after contraction",
-                        captures => \@captures_mzr
+                        captures => [@captures_mzr, @ipv4_captures],
                     );
                 }
             }
@@ -240,7 +254,9 @@ for (my $i = 0; $i <= 7; $i ++) {
                     $test -> match (
                         $address_nzr,
                         test     => "Non-flanking zero right of contraction",
-                        captures => \@captures_nzr,
+                        captures => [@captures_nzr,
+                                     $test -> tag (-ipv4) ? @ipv4_captures
+                                                          : ()],
                     )
                 }
             }

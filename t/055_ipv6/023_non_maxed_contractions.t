@@ -7,12 +7,13 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2013041201;
+use Test::Regexp 2013041801;
 use t::Patterns;
 
 our $r = eval "require Test::NoWarnings; 1";
 
-my @chunks = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
+my @chunks        = qw [2001 1d0 ffff 1 aa 98ba abcd e9f];
+my @ipv4_captures = ([IPv4 => undef], ([octet => undef]) x 4);
 
 #
 # Create addresses with 8 units, and 2 or more zero units in a row
@@ -34,8 +35,9 @@ for (my $i = 0; $i < @chunks - 1; $i ++) {
         foreach my $test ($IPv6_no_max_con, $IPv6_rfc2373) {
             $test -> match (
                 $address,
-                test => "Contractable sequences are allowed",
-                captures => \@captures
+                test     => "Contractable sequences are allowed",
+                captures => [@captures,
+                             $test -> tag (-ipv4) ? @ipv4_captures : ()],
             )
         }
     }

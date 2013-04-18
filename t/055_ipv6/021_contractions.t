@@ -7,7 +7,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2013041201;
+use Test::Regexp 2013041801;
 use t::Patterns;
 
 our $r = eval "require Test::NoWarnings; 1";

@@ -211,6 +211,12 @@ sub ipv6_constructor {
     my $zero_unit      = $lz ? "0{1,4}" : 0;
        $zero_unit      = "(?k<unit>:$zero_unit)";
 
+    my $IPv4;
+       $IPv4           = Regexp::Common510::RE (Net => 'IPv4', -sep  => '\.',
+                                                               -base => 'dec',
+                                                               -Keep => 'raw')
+                         if $ipv4;
+
     my @patterns;
 
     #
@@ -225,9 +231,22 @@ sub ipv6_constructor {
             may_end_with_zero   =>  1,
             may_start_with_zero =>  1,
         );
+        if ($ipv4) {
+            my $pat = $sequence_constructor -> (
+                non_zero_unit       => $non_zero_unit,
+                zero_unit           => $zero_unit,
+                length              => $NR_UNITS - 2,
+                max_zeros           =>  1,
+                may_end_with_zero   =>  1,
+                may_start_with_zero =>  1,
+            );
+            push @patterns => "$pat\.${IPv4}"
+        }
     }
     else {
-        push @patterns => join $SEP => ($unit) x $NR_UNITS;
+        push @patterns => join  $SEP => ($unit) x  $NR_UNITS;
+        push @patterns => join ($SEP => ($unit) x ($NR_UNITS)) . ".${IPv4}"
+              if $ipv4;
     }
 
     my $max_seq_length = $single_contraction ? $NR_UNITS - 1 : $NR_UNITS - 2;
