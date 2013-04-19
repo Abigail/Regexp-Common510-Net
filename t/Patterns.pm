@@ -31,6 +31,7 @@ our $IPv6_HEX           =   Test::Regexp:: -> new -> init (
      name               => "Net IPv6 -base => 'HEX'",
      tags               => {-base => 'HEX', -max_compression => 1},
 );
+
 our $IPv6_HeX           =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep => 0, -base => 'HeX'),
      keep_pattern       =>  RE (Net => 'IPv6', -Keep => 1, -base => 'HeX'),
@@ -38,6 +39,7 @@ our $IPv6_HeX           =   Test::Regexp:: -> new -> init (
      name               => "Net IPv6 -base => 'HeX'",
      tags               => {-base => 'HeX', -max_compression => 1},
 );
+
 our $IPv6_lz            =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep          => 0,
                                                -leading_zeros => 1),
@@ -48,6 +50,7 @@ our $IPv6_lz            =   Test::Regexp:: -> new -> init (
      tags               => {-leading_zeros   => 1, -base => 'hex',
                             -max_compression => 1},
 );
+
 our $IPv6_lz_HEX        =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep          =>  0,
                                                -leading_zeros =>  1,
@@ -60,6 +63,7 @@ our $IPv6_lz_HEX        =   Test::Regexp:: -> new -> init (
      tags               => {-leading_zeros   => 1, -base => 'HEX',
                             -max_compression => 1},
 );
+
 our $IPv6_lz_HeX        =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep          =>  0,
                                                -leading_zeros =>  1,
@@ -82,6 +86,7 @@ our $IPv6_no_max_com    =   Test::Regexp:: -> new -> init (
      name               => "Net IPv6 -max_compression => 0",
      tags               => {-max_compression => 0, -base => 'hex'},
 );
+
 our $IPv6_single_com    =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep => 0,
                                                -single_compression => 1),
@@ -92,6 +97,7 @@ our $IPv6_single_com    =   Test::Regexp:: -> new -> init (
      tags               => {-max_compression    => 1, -base => 'hex',
                             -single_compression => 1},
 );   
+
 our $IPv6_leading_zeros =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep => 0, -leading_zeros => 1),
      keep_pattern       =>  RE (Net => 'IPv6', -Keep => 1, -leading_zeros => 1),
@@ -100,6 +106,7 @@ our $IPv6_leading_zeros =   Test::Regexp:: -> new -> init (
      tags               => {-max_compression => 1, -base => 'hex',
                             -leading_zeros   => 1},
 );
+
 our $IPv6_ipv4          =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep => 0, -trailing_ipv4 => 1),
      keep_pattern       =>  RE (Net => 'IPv6', -Keep => 1, -trailing_ipv4 => 1),
@@ -107,6 +114,7 @@ our $IPv6_ipv4          =   Test::Regexp:: -> new -> init (
      name               => "Net IPv6 -trailing_ipv4 => 1",
      tags               => {-max_compression => 1, -ipv4            => 1},
 );
+
 our $IPv6_rfc2373       =   Test::Regexp:: -> new -> init (
      pattern            =>  RE (Net => 'IPv6', -Keep => 0, -rfc2373 => 1),
      keep_pattern       =>  RE (Net => 'IPv6', -Keep => 1, -rfc2373 => 1),
