@@ -32,7 +32,7 @@ for (my $i = 0; $i < @chunks - 1; $i ++) {
                 reason => "Address can be contracted"
             )
         }
-        foreach my $test ($IPv6_no_max_con, $IPv6_rfc2373) {
+        foreach my $test ($IPv6_no_max_com, $IPv6_rfc2373) {
             $test -> match (
                 $address,
                 test     => "Contractable sequences are allowed",

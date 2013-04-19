@@ -31,8 +31,8 @@ for (my $i = 0; $i <= 6; $i ++) {
                                                  $i + $m1 + $j + $m2 + $k - 1];
                     my $address = "${i_chunks}::${j_chunks}::${k_chunks}";
                     next if $seen {$address} ++;
-                    foreach my $test ($IPv6_default, $IPv6_no_max_con, 
-                                      $IPv6_single_con, $IPv6_lz,
+                    foreach my $test ($IPv6_default, $IPv6_no_max_com, 
+                                      $IPv6_single_com, $IPv6_lz,
                                       $IPv6_ipv4, $IPv6_rfc2373) {
                         $test -> no_match (
                             $address,

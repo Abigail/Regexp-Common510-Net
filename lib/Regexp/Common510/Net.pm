@@ -100,8 +100,8 @@ pattern  Net         => 'IPv6',
          -config     => {
             -leading_zeros       =>   0,
             -trailing_ipv4       =>   0,
-            -single_contraction  =>   0,
-            -max_contraction     =>   1,
+            -single_compression  =>   0,
+            -max_compression     =>   1,
             -base                =>  'hex',
             -rfc2373             =>   0,
          },
@@ -188,15 +188,15 @@ sub ipv6_constructor {
     my $base               = $args {-base};
     my $lz                 = $args {-leading_zeros} ? 1 : 0;
     my $ipv4               = $args {-trailing_ipv4};
-    my $single_contraction = $args {-single_contraction};
-    my $max_contraction    = $args {-max_contraction};
+    my $single_compression = $args {-single_compression};
+    my $max_compression    = $args {-max_compression};
 
     if ($args {-rfc2373}) {
         $base               = 'HeX';
         $lz                 =  1;
         $ipv4               =  1;
-        $single_contraction =  1;
-        $max_contraction    =  0;
+        $single_compression =  1;
+        $max_compression    =  0;
     }
 
     if (!$IPv6_unit {$base}) {
@@ -222,9 +222,9 @@ sub ipv6_constructor {
     my @patterns;
 
     #
-    # It may be that there are no contractions.
+    # It may be that there are no compressions.
     #
-    if ($max_contraction) {
+    if ($max_compression) {
         my $pat = $sequence_constructor -> (
             non_zero_unit       => $non_zero_unit,
             zero_unit           => $zero_unit,
@@ -257,11 +257,11 @@ sub ipv6_constructor {
              "(?k<unit>:)(?k<unit>:)\\.${IPv4}" if $ipv4;
     }
 
-    my $max_seq_length = $single_contraction ? $NR_UNITS - 1 : $NR_UNITS - 2;
+    my $max_seq_length = $single_compression ? $NR_UNITS - 1 : $NR_UNITS - 2;
     my @ipv4_vals      = $ipv4 ? (0, 1) : (0);
 
     #
-    # Construct sub-patterns for contractions.
+    # Construct sub-patterns for compressions.
     #
     foreach my $ipv4_val (@ipv4_vals) {
         my $max_seq_l = $max_seq_length - 2 * $ipv4_val;
@@ -281,11 +281,11 @@ sub ipv6_constructor {
                 if ($l == 0) {
                     $patl = "";
                 }
-                elsif ($max_contraction) {
+                elsif ($max_compression) {
                     #
                     # We cannot have as many (or more) zero units in succession
-                    # as there are contracted units. Nor can there be a zero
-                    # unit just before the contraction.
+                    # as there are compressed units. Nor can there be a zero
+                    # unit just before the compression.
                     #
                     $patl = $sequence_constructor -> (
                         non_zero_unit         =>  $non_zero_unit,
@@ -304,11 +304,11 @@ sub ipv6_constructor {
                 if ($r == 0) {
                     $patr = "";
                 }
-                elsif ($max_contraction) {
+                elsif ($max_compression) {
                     #
                     # We cannot have more zero units in succession as there are
-                    # contracted units. Nor can there be a zero unit just after
-                    # the contraction.
+                    # compressed units. Nor can there be a zero unit just after
+                    # the compression.
                     #
                     $patr = $sequence_constructor -> (
                         non_zero_unit         =>  $non_zero_unit,
