@@ -22,6 +22,7 @@ t/055_ipv6/022_multiple_compressions.t
 t/055_ipv6/023_non_maxed_compressions.t
 t/055_ipv6/024_non_maxed_compressions.t
 t/055_ipv6/025_non_maxed_compressions.t
+t/055_ipv6/030_ipv4.t
 t/055_ipv6/800_units.t
 t/060_mac/001_first.t
 t/060_mac/010_basic.t
