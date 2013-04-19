@@ -258,7 +258,11 @@ sub ipv6_constructor {
     }
 
     my $max_seq_length = $single_compression ? $NR_UNITS - 1 : $NR_UNITS - 2;
-    my @ipv4_vals      = $ipv4 ? (0, 1) : (0);
+    #
+    # Since we prefer longest match, we have to go for the
+    # trailing IPv4 option first.
+    #
+    my @ipv4_vals      = $ipv4 ? (1, 0) : (0);
 
     #
     # Construct sub-patterns for compressions.
