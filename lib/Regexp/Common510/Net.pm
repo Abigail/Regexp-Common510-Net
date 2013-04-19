@@ -258,69 +258,76 @@ sub ipv6_constructor {
     }
 
     my $max_seq_length = $single_contraction ? $NR_UNITS - 1 : $NR_UNITS - 2;
+    my @ipv4_vals      = $ipv4 ? (0, 1) : (0);
+
     #
-    # Otherwise, there cannot be more than 6 units.
+    # Construct sub-patterns for contractions.
     #
-    for (my $l = 0; $l <= $max_seq_length; $l ++) {
-        #
-        # We prefer to do longest match, so larger $r gets priority
-        #
-        for (my $r = $max_seq_length - $l; $r >= 0; $r --) {
+    foreach my $ipv4_val (@ipv4_vals) {
+        my $max_seq_l = $max_seq_length - 2 * $ipv4_val;
+        for (my $l = 0; $l <= $max_seq_l; $l ++) {
             #
-            # $l is the number of blocks left of the double colon,
-            # $r is the number of blocks left of the double colon,
-            # $m is the number of omitted blocks
+            # We prefer to do longest match, so larger $r gets priority
             #
-            my $m    = $NR_UNITS - $l - $r;
+            for (my $r = $max_seq_l - $l; $r >= 0; $r --) {
+                #
+                # $l is the number of blocks left of the double colon,
+                # $r is the number of blocks left of the double colon,
+                # $m is the number of omitted blocks
+                #
+                my $m = $NR_UNITS - 2 * $ipv4_val - $l - $r;
 
-            my $patl;
-            if ($l == 0) {
-                $patl = "";
-            }
-            elsif ($max_contraction) {
-                #
-                # We cannot have as many (or more) zero units in succession
-                # as there are contracted units. Nor can there be a zero
-                # unit just before the contraction.
-                #
-                $patl = $sequence_constructor -> (
-                    non_zero_unit         =>  $non_zero_unit,
-                    zero_unit             =>  $zero_unit,
-                    length                =>  $l,
-                    max_zeros             =>  $m - 1,
-                    may_start_with_zero   =>   1,
-                    may_end_with_zero     =>   0,
-                );
-            }
-            else {
-                $patl = join $SEP => ($unit) x  $l;
-            }
+                my $patl;
+                if ($l == 0) {
+                    $patl = "";
+                }
+                elsif ($max_contraction) {
+                    #
+                    # We cannot have as many (or more) zero units in succession
+                    # as there are contracted units. Nor can there be a zero
+                    # unit just before the contraction.
+                    #
+                    $patl = $sequence_constructor -> (
+                        non_zero_unit         =>  $non_zero_unit,
+                        zero_unit             =>  $zero_unit,
+                        length                =>  $l,
+                        max_zeros             =>  $m - 1,
+                        may_start_with_zero   =>   1,
+                        may_end_with_zero     =>   0,
+                    );
+                }
+                else {
+                    $patl = join $SEP => ($unit) x  $l;
+                }
 
-            my $patr;
-            if ($r == 0) {
-                $patr = "";
-            }
-            elsif ($max_contraction) {
-                #
-                # We cannot have more zero units in succession as there are
-                # contracted units. Nor can there be a zero unit just after
-                # the contraction.
-                #
-                $patr = $sequence_constructor -> (
-                    non_zero_unit         =>  $non_zero_unit,
-                    zero_unit             =>  $zero_unit,
-                    length                =>  $r,
-                    max_zeros             =>  $m,
-                    may_start_with_zero   =>   0,
-                    may_end_with_zero     =>   1,
-                );
-            }
-            else {
-                $patr = join $SEP => ($unit) x  $r;
-            }
+                my $patr;
+                if ($r == 0) {
+                    $patr = "";
+                }
+                elsif ($max_contraction) {
+                    #
+                    # We cannot have more zero units in succession as there are
+                    # contracted units. Nor can there be a zero unit just after
+                    # the contraction.
+                    #
+                    $patr = $sequence_constructor -> (
+                        non_zero_unit         =>  $non_zero_unit,
+                        zero_unit             =>  $zero_unit,
+                        length                =>  $r,
+                        max_zeros             =>  $m,
+                        may_start_with_zero   =>   0,
+                        may_end_with_zero     =>   1,
+                    );
+                }
+                else {
+                    $patr = join $SEP => ($unit) x  $r;
+                }
 
-            my $patm = "(?k<unit>:)" x $m;
-            push @patterns => "(?:$patl$SEP$patm$SEP$patr)";
+                my $patm = "(?k<unit>:)" x $m;
+                my $pat4 = $ipv4_val ? "(?k<unit>:)(?k<unit>:)\\.${IPv4}"
+                                     : "";
+                push @patterns => "(?:$patl$SEP$patm$SEP$patr$pat4)";
+            }
         }
     }
 
