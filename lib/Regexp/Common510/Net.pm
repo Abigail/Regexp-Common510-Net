@@ -454,11 +454,11 @@ following named captures are done:
 
 =over 2
 
-=item C<< IPv4 >>
+=item C<< IPv4 >>, C<< $1 >>
 
 The entire address.
 
-=item C<< octet >>
+=item C<< octet >>, C<< $2 .. $5 >>
 
 The four octets. Note that there are four capture groups with the name
 C<< octet >>, so one has to look at C<< $- {octet} >> to inspect all
@@ -604,11 +604,11 @@ following named captures are done:
 
 =over 2
 
-=item C<< IPv6 >>
+=item C<< IPv6 >>, C<< $1 >>
 
 This captures the entire address.
 
-=item C<< unit >>
+=item C<< unit >>, C<< $2 .. $9 >>
 
 There will be 8 captures named C<< unit >>, each capturing a 16-bit part.
 Do note that when there is a compression, there will still be 8 C<< unit >>
@@ -616,13 +616,13 @@ captures; the compressed parts will capture as empty strings. If the
 last 32 bits are represented as an IPv4 address, there will still be 8
 captures named C<< unit >> -- the last two will be empty strings.
 
-=item C<< IPv4 >>
+=item C<< IPv4 >>, C<< $10 >>
 
 Only present if C<< -trailing_ipv4 => 1 >> or C<< -rfc2373 => 1 >> is used.
 Captures the last 32 bits, if represented as an IPv4 address. Otherwise,
 the value will be undefined.
 
-=item C<< octet >>
+=item C<< octet >>, C<< $11 .. $14 >>
 
 Only present if C<< -trailing_ipv4 => 1 >> or C<< -rfc2373 => 1 >> is used.
 There will be four captures named C<< octet >>, and match the 8-bit parts
@@ -741,11 +741,11 @@ following named captures are done:
 
 =over 2
 
-=item C<< MAC >>
+=item C<< MAC >>, C<< $1 >>
 
 The entire address.
 
-=item C<< octet >>
+=item C<< octet >>, C<< $2 .. $7 >>
 
 The six octets. Note that there are six capture groups with the name
 C<< octet >>, so one has to look at C<< $- {octet} >> to inspect all
@@ -807,7 +807,8 @@ a single space as well.
 =head3 Capturing
 
 If the C<< -Keep >> option is used (see L<< Regexp::Common510 >>), only
-one capture is done, named C<< domain >>, which matches the entire domain.
+one capture is done, named C<< domain >> (C<< $1 >>), which matches
+the entire domain.
 
 =head3 Caveat
 
