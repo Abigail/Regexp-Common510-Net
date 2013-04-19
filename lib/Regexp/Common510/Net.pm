@@ -253,8 +253,8 @@ sub ipv6_constructor {
     }
     else {
         push @patterns => join  $SEP => ($unit) x  $NR_UNITS;
-        push @patterns => join ($SEP => ($unit) x ($NR_UNITS)) . "\\.${IPv4}"
-              if $ipv4;
+        push @patterns => join ($SEP => ($unit) x ($NR_UNITS - 2)) .
+             "(?k<unit>:)(?k<unit>:)\\.${IPv4}" if $ipv4;
     }
 
     my $max_seq_length = $single_contraction ? $NR_UNITS - 1 : $NR_UNITS - 2;
