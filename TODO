@@ -10,7 +10,6 @@
          - Trailing IPv4 address
          - Fail: 
              - Units with incorrect base
-             - Garbage
 
 - Mac addresses:
 
