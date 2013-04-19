@@ -225,8 +225,6 @@ sub ipv6_constructor {
                                                                -base => 'dec',
                                                                -Keep => 'raw')
                          if $ipv4;
-    my $empty_ipv4     = "(?k<IPv4>:(?k<octet>:)(?k<octet>:)" .
-                                   "(?k<octet>:)(?k<octet>:))";
 
     my @patterns;
 
@@ -242,7 +240,6 @@ sub ipv6_constructor {
             may_end_with_zero   =>  1,
             may_start_with_zero =>  1,
         );
-      # $pat .= $empty_ipv4 if $ipv4;
         push @patterns => $pat;
         if ($ipv4) {
             my $pat = $sequence_constructor -> (
@@ -484,6 +481,218 @@ of them. (<< @{$- {octet}} >> lists them all).
  say $- {octet} [1];    #   0
  say $- {octet} [2];    #   0
  say $- {octet} [3];    #   1
+
+
+
+
+=head2 C<< IPv6 >>
+
+The C<< IPv6 >> matches IP version 6 addresses. RFC 2373 defines 
+textual representation of those addresses. An IPv6 address is 128 bits,
+written down as 8 16-bit parts. Each 16-bit part is written as a 
+hexadecimal number (at most 4 characters); the 16-bit parts are separated
+by colons. Because sequences of parts that are equal to 0 are common,
+they can be compressed by leaving out the entire sequence (and the colons
+that separate them), leaving a double colon to indicate the compression.
+At most one compression is allowed. It's also allowed to replace the last
+32 bits with an IPv4 address, with a dot separating the IPv6 part and the
+IPv4 part. Some examples of valid IPv6 addresses:
+
+    2001:abcd:0:0:0:1:c0a8:7f01
+    2001:aBCd:0000:0000:0000:0001:c0A8:7f01
+    2001:abcd::1:c0a8:7f01
+    2001:aBCd:0:0:0:1:192.168.127.1
+    2001:abcd::1:192.168.127.1
+    ::1:c0a8:7f01
+    2001:abcd::
+    ::
+
+The first five are different respresentations of the same address. 
+
+That the same address can be represented in different ways is something
+that RFC 5952 addresses. It inflicts the following rules to create a
+canonical address:
+
+=over 2
+
+=item 1
+
+Addresses must use lower case letters for C<< a .. f >>.
+
+=item 2
+
+A single 16-bit unit that is equal to 0 may not be compressed.
+
+=item 3
+
+If the address contains a sequence to 2 or more parts that are 0, a
+compression must happen. Of all possible compressions, the longest
+possible compression must be chosen. If there is a choice of longest
+possible compressions; the left-most must be taken.
+
+=item 4
+
+Leading zeros in a 16-bit part are not allowed.
+
+=item 5
+
+It is not allowed to represent the last 32 bits as an IPv4 address.
+
+=back
+
+By default, the pattern matches addresses that follow the specification
+of RFC 5952, that is, the pattern matches canonical addresses. 
+
+The following configuration options are available:
+
+=over 2
+
+=item C<< -base => hex|HeX|HEX >> (default C<< hex >>)
+
+This flag indicates whether lower case letters must be used, upper case 
+letters, or that either case is allowed. C<< -base => 'hex' >> (the default)
+means the address must use lower case letters. C<< -base => 'HEX' >> 
+matches addresses that use upper case letters, while C<< -base => 'HeX' >>
+means the hexadecimal digits exceeding 9 can be written in either case.
+
+=item C<< -leading_zeros => BOOL >> (default C<< 0 >>)
+
+If the C<< -leading_zeros >> parameter is used (with a true value), the
+pattern will accept addresses with the 16-bit parts use leading zeros.
+
+=item C<< -single_compression => BOOL >> (default C<< 0 >>)
+
+If the C<< -single_compression >> parameter is used (with a true value), the
+pattern will accept addresses where a single 16-bit unit is compressed.
+
+=item C<< -max_compression => BOOL >> (default C<< 1 >>)
+
+The C<< -max_compression >> parameter is used to indicate whether or not
+we require addresses to use a maximal possible compression. This means that
+an address that does not use a compression, but has 2 or more 16-bit parts
+in sequence that are 0, are not matched. By default, this flag is enabled,
+so if you want to match addresses that may not use compression, or uses a
+non-optimal compression, you need to turn this option off.
+
+=item C<< -trailing_ipv4 => BOOL >> (default C<< 0 >>)
+
+If the C<< -trailing_ipv4 >> parameter is used (with a true value), the
+pattern will accept addresses where the final 32 bits are represented 
+as an IPv4 address.
+
+=item C<< -rfc2373 => BOOL >> (default C<< 0 >>)
+
+Using this parameter enables the pattern to recognize addresses as 
+defined in RFC 2373. It is a shorthand for C<< -base => 'HeX',
+-leading_zero => 1, -single_compression => 1, -max_compression => 0,
+-trailing_ipv4 => 1 >>. This is pattern that will accept the most.
+
+=item C<< -lax => BOOL >> (default C<< 0 >>)
+
+Using this parameter enables the pattern to recognize addresses as 
+defined in RFC 2373, except addresses where the last 32 bits are represented
+as an IPv4 address. It is a shorthand for C<< -base => 'HeX',
+-leading_zero => 1, -single_compression => 1, -max_compression => 0,
+-trailing_ipv4 => 0 >>.
+
+=back
+
+=head3 Capturing
+
+If the C<< -Keep >> option is used (see L<< Regexp::Common510 >>), the
+following named captures are done:
+
+=over 2
+
+=item C<< IPv6 >>
+
+This captures the entire address.
+
+=item C<< unit >>
+
+There will be 8 captures named C<< unit >>, each capturing a 16-bit part.
+Do note that when there is a compression, there will still be 8 C<< unit >>
+captures; the compressed parts will capture as empty strings. If the
+last 32 bits are represented as an IPv4 address, there will still be 8
+captures named C<< unit >> -- the last two will be empty strings.
+
+=item C<< IPv4 >>
+
+Only present if C<< -trailing_ipv4 => 1 >> or C<< -rfc2373 => 1 >> is used.
+Captures the last 32 bits, if represented as an IPv4 address. Otherwise,
+the value will be undefined.
+
+=item C<< octet >>
+
+Only present if C<< -trailing_ipv4 => 1 >> or C<< -rfc2373 => 1 >> is used.
+There will be four captures named C<< octet >>, and match the 8-bit parts
+of the IPv4 address. If the matched address does not end with an IPv4 
+address, the four C<< octet >> values will be undefined. (C<< $- {octet} >>
+will be a reference to an array containing four undefined values).
+
+=back
+
+=head3 Examples
+
+ "2001:abcd::1:c0a8:7f01"    =~ RE Net => 'IPv6';
+ "2001:ABCD::1:C0A8:7F01"    =~ RE Net => 'IPv6', -base => 'HEX';
+ "::"                        =~ RE Net => 'IPv6';
+ "2001:abcd::0001:c0a8:7f01" =~ RE Net => 'IPv6', -leading_zeros => 1;
+ "1234:0:0:0:0:1.127.0.0.1"  =~ RE Net => 'IPv6', -rfc2373 => 1;
+
+ "2001:abcd::1:c0a8:7f01"    =~ RE Net => 'IPv6', -Keep => 1;
+ say $+ {IPv6};              #  2001:abcd::1:c0a8:7f01
+ say $- {unit} [0];          #  2001
+ say $- {unit} [1];          #  abcd
+ say $- {unit} [2];          #  ''
+ say $- {unit} [3];          #  ''
+ say $- {unit} [4];          #  ''
+ say $- {unit} [5];          #  1
+ say $- {unit} [6];          #  c0a8
+ say $- {unit} [7];          #  7f01
+
+ "1234::1.127.0.0.1"         =~ RE Net => 'IPv6', -rfc2373 => 1, -Keep => 1;
+ say $+ {IPv6};              #  1234::1.127.0.0.1
+ say $- {unit} [0];          #  1234
+ say $- {unit} [1];          #  ''
+ say $- {unit} [2];          #  ''
+ say $- {unit} [3];          #  ''
+ say $- {unit} [4];          #  ''
+ say $- {unit} [5];          #  1
+ say $- {unit} [6];          #  ''
+ say $- {unit} [7];          #  ''
+ say $+ {IPv4};              # 127.0.0.1
+ say $- {octet} [0];         # 127
+ say $- {octet} [1];         # 0
+ say $- {octet} [2];         # 0
+ say $- {octet} [3];         # 1
+
+=head3 Notes on pattern sizes and performance
+
+The patterns generated are quite large, and the size can vary quite a lot
+depending on the parameters. Large patterns may have a performance impact.
+Patterns that have C<< -max_compression => 1 >> (which includes the
+default) will contain a lot of alternations, and may perform a lot of
+backtracking before matching (or failing).
+
+Here is an selection of patterns, and their sizes:
+
+ +---------------------------------------------+-------+
+ | Pattern                                     |  Size |
+ +---------------------------------------------+-------+
+ | RE Net => 'IPv6';                           | 24985 |
+ | RE Net => 'IPv6', -base          => 'HeX';  | 30043 |
+ | RE Net => 'IPv6', -leading_zeros =>    1;   | 73255 |
+ | RE Net => 'IPv6', -rfc2373       =>    1;   | 10540 |
+ | RE Net => 'IPv6', -lax           =>    1;   |  4379 |
+ | RE Net => 'IPv6', -Keep          =>    1;   | 31670 |
+ +---------------------------------------------+-------+
+
+The default pattern is the most restrictive pattern, recognizing only
+canonical addresses. This may not be the best pattern to use if your
+goal is to extract IPv6 addresses from a text, and you want to be more
+generous in what you accept. In that case, you may want to consider
+C<< RE Net => 'IPv6', -lax => 1 >> or C<< RE Net => 'IPv6', -rfc2373 => 1 >>.
 
 
 
