@@ -106,7 +106,7 @@ for (my $i = 0; $i <= 7; $i ++) {
                     reason   => "Contraction of 1 unit"
                 )
             }
-            foreach my $test ($IPv6_single_com, $IPv6_rfc2373) {
+            foreach my $test ($IPv6_single_com, $IPv6_rfc2373, $IPv6_lax) {
                 $test -> match (
                     $address,
                     test     => "Contraction of 1 unit",
@@ -118,7 +118,7 @@ for (my $i = 0; $i <= 7; $i ++) {
         else {
             foreach my $test ($IPv6_default, $IPv6_no_max_com,
                               $IPv6_single_com, $IPv6_lz,
-                              $IPv6_ipv4, $IPv6_rfc2373) {
+                              $IPv6_ipv4, $IPv6_rfc2373, $IPv6_lax) {
                 $test -> match (
                     $address,
                     test     => "Contraction ${l}::${r}",
@@ -135,7 +135,7 @@ for (my $i = 0; $i <= 7; $i ++) {
                          reason => "0 unit before contraction",
                     );
                 }
-                foreach my $test ($IPv6_no_max_com, $IPv6_rfc2373) {
+                foreach my $test ($IPv6_no_max_com, $IPv6_rfc2373, $IPv6_lax) {
                     $test -> match (
                         $address_zl,
                         test     => "0 unit before contraction",
@@ -153,7 +153,7 @@ for (my $i = 0; $i <= 7; $i ++) {
                         reason   => "Leading zero before contraction"
                     );
                 }
-                foreach my $test ($IPv6_lz, $IPv6_rfc2373) {
+                foreach my $test ($IPv6_lz, $IPv6_rfc2373, $IPv6_lax) {
                     $test -> match (
                         $address_lzl,
                         test     => "Leading zero before contraction",
@@ -170,11 +170,13 @@ for (my $i = 0; $i <= 7; $i ++) {
                         reason   => "Multiple zeros before contraction",
                     );
                 }
-                foreach my $test ($IPv6_rfc2373) {
+                foreach my $test ($IPv6_rfc2373, $IPv6_lax) {
                     $test -> match (
                         $address_mzl,
                         test     => "Multiple zeros before contraction",
-                        captures => [@captures_mzl, @ipv4_captures],
+                        captures => [@captures_mzl,
+                                     $test -> tag (-ipv4) ? @ipv4_captures 
+                                                          : ()],
                     );
                 }
             }
@@ -183,7 +185,7 @@ for (my $i = 0; $i <= 7; $i ++) {
             if ($l > 1) {
                 foreach my $test ($IPv6_default, $IPv6_no_max_com,
                                   $IPv6_lz, $IPv6_single_com,
-                                  $IPv6_ipv4, $IPv6_rfc2373) {
+                                  $IPv6_ipv4, $IPv6_rfc2373, $IPv6_lax) {
                     $test -> match (
                         $address_nzl,
                         test     => "Non-flanking zero left of contraction",
@@ -202,7 +204,7 @@ for (my $i = 0; $i <= 7; $i ++) {
                          reason => "0 unit after contraction",
                     );
                 }
-                foreach my $test ($IPv6_no_max_com, $IPv6_rfc2373) {
+                foreach my $test ($IPv6_no_max_com, $IPv6_rfc2373, $IPv6_lax) {
                     $test -> match (
                         $address_zr,
                         test     => "0 unit after contraction",
@@ -220,7 +222,7 @@ for (my $i = 0; $i <= 7; $i ++) {
                         reason   => "Leading zero after contraction"
                     );
                 }
-                foreach my $test ($IPv6_lz, $IPv6_rfc2373) {
+                foreach my $test ($IPv6_lz, $IPv6_rfc2373, $IPv6_lax) {
                     $test -> match (
                         $address_lzr,
                         test     => "Leading zero after contraction",
@@ -237,11 +239,13 @@ for (my $i = 0; $i <= 7; $i ++) {
                         reason   => "Multiple zeros after contraction",
                     );
                 }
-                foreach my $test ($IPv6_rfc2373) {
+                foreach my $test ($IPv6_rfc2373, $IPv6_lax) {
                     $test -> match (
                         $address_mzr,
                         test     => "Multiple zeros after contraction",
-                        captures => [@captures_mzr, @ipv4_captures],
+                        captures => [@captures_mzr,
+                                     $test -> tag (-ipv4) ? @ipv4_captures 
+                                                          : ()],
                     );
                 }
             }
@@ -250,7 +254,7 @@ for (my $i = 0; $i <= 7; $i ++) {
             if ($r > 1) {
                 foreach my $test ($IPv6_default, $IPv6_no_max_com,
                                   $IPv6_lz, $IPv6_single_com,
-                                  $IPv6_ipv4, $IPv6_rfc2373) {
+                                  $IPv6_ipv4, $IPv6_rfc2373, $IPv6_lax) {
                     $test -> match (
                         $address_nzr,
                         test     => "Non-flanking zero right of contraction",

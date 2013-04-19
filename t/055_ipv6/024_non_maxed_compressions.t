@@ -42,7 +42,7 @@ for (my $l = 0; $l <= 6; $l ++) {
                     reason => "Contraction is not left most",
                 )
             }
-            foreach my $test ($IPv6_no_max_com, $IPv6_rfc2373) {
+            foreach my $test ($IPv6_no_max_com, $IPv6_rfc2373, $IPv6_lax) {
                 $test -> match (
                     $address,
                     test     => "Contractions do not have to be left most",
@@ -66,7 +66,8 @@ for (my $l = 0; $l <= 6; $l ++) {
                             map {[unit => $_]} @left, ("") x $m, @copy);
 
             foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz,
-                              $IPv6_no_max_com, $IPv6_ipv4, $IPv6_rfc2373) {
+                              $IPv6_no_max_com, $IPv6_ipv4, $IPv6_rfc2373,
+                              $IPv6_lax) {
                 $test -> match (
                     $address,
                     test     => "Squence of zeros of equal length " .

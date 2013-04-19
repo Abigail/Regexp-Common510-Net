@@ -104,6 +104,7 @@ pattern  Net         => 'IPv6',
             -max_compression     =>   1,
             -base                =>  'hex',
             -rfc2373             =>   0,
+            -lax                 =>   0,
          },
          -pattern    => \&ipv6_constructor,
 ;
@@ -190,6 +191,14 @@ sub ipv6_constructor {
     my $ipv4               = $args {-trailing_ipv4};
     my $single_compression = $args {-single_compression};
     my $max_compression    = $args {-max_compression};
+
+    if ($args {-lax}) {
+        $base               = 'HeX';
+        $lz                 =  1;
+        $ipv4               =  0;
+        $single_compression =  1;
+        $max_compression    =  0;
+    }
 
     if ($args {-rfc2373}) {
         $base               = 'HeX';

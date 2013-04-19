@@ -40,7 +40,7 @@ for (my $l = 0; $l <= 4; $l ++) {
              );
          }
 
-         foreach my $test ($IPv6_default) {
+         foreach my $test ($IPv6_default, $IPv6_lax) {
              $test -> no_match (
                  $address,
                   reason => "Trailing IPv4 part not allowed",

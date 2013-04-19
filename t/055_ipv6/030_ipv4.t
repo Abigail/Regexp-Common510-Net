@@ -33,7 +33,7 @@ foreach my $c (1 .. 20) {
         );
     }
 
-    foreach my $test ($IPv6_default) {
+    foreach my $test ($IPv6_default, $IPv6_lax) {
         $test -> no_match (
             $address,
              reason => "Trailing IPv4 not allowed",

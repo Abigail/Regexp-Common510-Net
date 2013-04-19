@@ -24,7 +24,7 @@ for (my $i = 1; $i < 8; $i ++) {
     my $address = join ":" => @copy;
     foreach my $test ($IPv6_default, $IPv6_no_max_com, 
                       $IPv6_single_com, $IPv6_lz,
-                      $IPv6_ipv4, $IPv6_rfc2373) {
+                      $IPv6_ipv4, $IPv6_rfc2373, $IPv6_lax) {
         $test -> no_match (
             $address,
             reason => "Contracting 0 units"
@@ -35,7 +35,7 @@ for (my $i = 1; $i < 8; $i ++) {
     my $address = join ":" => @chunks;
     foreach my $test ($IPv6_default, $IPv6_no_max_com, 
                       $IPv6_single_com, $IPv6_lz,
-                      $IPv6_ipv4, $IPv6_rfc2373) {
+                      $IPv6_ipv4, $IPv6_rfc2373, $IPv6_lax) {
         foreach my $address ("::$address", "${address}::") {
             $test -> no_match (
                 $address,

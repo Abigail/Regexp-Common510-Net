@@ -36,7 +36,8 @@ foreach my $c (1 .. 20) {
 
     if ($lc_address eq $uc_address) {
         foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz, $IPv6_lz_HeX,
-                          $IPv6_HEX, $IPv6_lz_HEX, $IPv6_ipv4, $IPv6_rfc2373) {
+                          $IPv6_HEX, $IPv6_lz_HEX, $IPv6_ipv4, $IPv6_rfc2373,
+                          $IPv6_lax) {
             $test -> match (
                 $lc_address,
                  test     => "Basic IPv6",
@@ -47,7 +48,7 @@ foreach my $c (1 .. 20) {
     }
     else {
         foreach my $test ($IPv6_default, $IPv6_HeX, $IPv6_lz, $IPv6_lz_HeX,
-                          $IPv6_ipv4, $IPv6_rfc2373,) {
+                          $IPv6_ipv4, $IPv6_rfc2373, $IPv6_lax) {
             $test -> match (
                 $lc_address,
                  test     => "Basic IPv6",
@@ -63,7 +64,7 @@ foreach my $c (1 .. 20) {
         }
 
         foreach my $test ($IPv6_HEX, $IPv6_lz_HEX, $IPv6_HeX, $IPv6_lz_HeX,
-                          $IPv6_rfc2373,) {
+                          $IPv6_rfc2373, $IPv6_lax) {
             $test -> match (
                 $uc_address,
                  test     => "Basic IPv6, upper cased",
@@ -93,7 +94,7 @@ foreach my $c (1 .. 20) {
 
     if ($lc_address eq $uc_address) {
         foreach my $test ($IPv6_lz, $IPv6_lz_HeX, $IPv6_lz_HEX,
-                          $IPv6_rfc2373,) {
+                          $IPv6_rfc2373, $IPv6_lax) {
             $test -> match (
                 $lc_address,
                  test     => "Basic IPv6, with leading zeros",
@@ -109,7 +110,7 @@ foreach my $c (1 .. 20) {
         }
     }
     else {
-        foreach my $test ($IPv6_lz, $IPv6_lz_HeX, $IPv6_rfc2373) {
+        foreach my $test ($IPv6_lz, $IPv6_lz_HeX, $IPv6_rfc2373, $IPv6_lax) {
             $test -> match (
                 $lc_address,
                  test     => "Basic IPv6, with leading zeros",
@@ -136,7 +137,8 @@ foreach my $c (1 .. 20) {
             );
         }
 
-        foreach my $test ($IPv6_lz_HEX, $IPv6_lz_HeX, $IPv6_rfc2373) {
+        foreach my $test ($IPv6_lz_HEX, $IPv6_lz_HeX, $IPv6_rfc2373,
+                          $IPv6_lax) {
             $test -> match (
                 $uc_address,
                  test     => "Basic IPv6, with leading zeros, upper case A-F",

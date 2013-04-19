@@ -13,7 +13,7 @@ our @ISA    = qw [Exporter];
 our @EXPORT = qw [$IPv6_default $IPv6_HEX $IPv6_HeX
                   $IPv6_lz $IPv6_lz_HEX $IPv6_lz_HeX
                   $IPv6_no_max_com $IPv6_single_com
-                  $IPv6_ipv4 $IPv6_rfc2373 @IPv6];
+                  $IPv6_ipv4 $IPv6_rfc2373 $IPv6_lax @IPv6];
 
 
 our @IPv6 = (
@@ -128,5 +128,15 @@ our @IPv6 = (
          tags               => {-max_compression => 0, -base => 'HeX',
                                 -leading_zeros   => 1, -single_compression => 1,
                                 -ipv4            => 1},
+    ),
+
+    our $IPv6_lax           =   Test::Regexp:: -> new -> init (
+         pattern            =>  RE (Net => 'IPv6', -Keep => 0, -lax => 1),
+         keep_pattern       =>  RE (Net => 'IPv6', -Keep => 1, -lax => 1),
+         full_text          =>  1,
+         name               => "Net IPv6 -lax => 1",
+         tags               => {-max_compression => 0, -base => 'HeX',
+                                -leading_zeros   => 1, -single_compression => 1,
+                                -ipv4            => 0},
     ),
 );
