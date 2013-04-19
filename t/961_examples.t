@@ -73,6 +73,7 @@ sub process_file {
                       \s+ (?<value>.*\S)/x) {
             my $plus_minus = $+ {plus_minus};
             my $value      = $+ {value};
+               $value      = $1 if $value =~ /^'(.*)'\s*$/;
             my $ps_val     = $plus_minus;
             $ps_val        =~ s/^\$\+/\$plus/;
             $ps_val        =~ s/^\$-/\$minus/;
